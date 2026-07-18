@@ -1,0 +1,2122 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>None</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+        :root {
+            --neon-red: #ff001c;
+            --neon-glow: rgba(255, 0, 28, 0.8);
+            --neon-dim: rgba(255, 0, 28, 0.2);
+            --neon-border: rgba(255, 0, 28, 0.4);
+            --neon-border-light: rgba(255, 0, 28, 0.3);
+            --visualizer-opacity: 0.3;
+            --text-main: #ffffff;
+            --text-muted: #c0b0b5;
+            --bg-dark: #0b0b0b;
+        }
+        body {
+            background: #000000;
+            min-height: 100vh;
+            width: 100%;
+            overflow: hidden;
+            font-family: "Segoe UI", "Inter", system-ui, sans-serif;
+        }
+        .widget-wrapper {
+            position: fixed;
+            z-index: 9998;
+            cursor: default;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            will-change: transform, left, top;
+            transition: none;
+        }
+        .widget-wrapper .edit-frame {
+            display: none;
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            width: calc(100% + 20px);
+            height: calc(100% + 20px);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 16px;
+            pointer-events: none;
+            z-index: 50;
+        }
+        .widget-wrapper .edit-frame .edit-controls {
+            position: absolute;
+            bottom: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 6px;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 4px 8px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            pointer-events: all;
+            white-space: nowrap;
+            z-index: 100;
+        }
+        .widget-wrapper .edit-frame .edit-controls img {
+            width: 16px;
+            height: 16px;
+            filter: brightness(0) invert(1) opacity(0.7);
+            cursor: pointer;
+            transition: 0.2s;
+            display: block;
+            pointer-events: all;
+            flex-shrink: 0;
+        }
+        .widget-wrapper .edit-frame .edit-controls img:hover {
+            filter: brightness(0) invert(1) opacity(1);
+            transform: scale(1.1);
+        }
+        .widget-wrapper.edit-mode .edit-frame {
+            display: block !important;
+        }
+        .widget-wrapper.edit-mode {
+            pointer-events: all !important;
+        }
+
+        #settings-top-btn {
+            top: 20px;
+            right: 20px;
+            width: 48px;
+            height: 48px;
+            z-index: 9999;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--neon-border);
+            border-radius: 12px;
+            cursor: pointer;
+            padding: 0;
+            overflow: visible;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+            transition: box-shadow 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+        }
+        #settings-top-btn:hover {
+            border-color: var(--neon-red);
+            box-shadow: 0 0 20px var(--neon-glow);
+            background: rgba(20, 0, 0, 0.8);
+        }
+        #settings-top-btn .btn-icon {
+            width: 28px;
+            height: 28px;
+            filter: brightness(0) invert(1) drop-shadow(0 0 4px var(--neon-glow));
+            transition: 0.3s;
+            display: block;
+            pointer-events: none;
+            flex-shrink: 0;
+        }
+        #settings-top-btn:hover .btn-icon {
+            filter: brightness(0) invert(1) drop-shadow(0 0 8px var(--neon-red));
+        }
+
+        #player-widget {
+            top: 100px;
+            left: 20px;
+            width: auto;
+            height: auto;
+            padding: 0;
+            gap: 6px;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            backdrop-filter: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: none;
+            flex-wrap: wrap;
+            pointer-events: all;
+        }
+        #player-widget .player-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+            flex-shrink: 0;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+        }
+        #player-widget .player-btn:hover {
+            background: var(--neon-dim);
+            border-color: var(--neon-red);
+            box-shadow: 0 0 24px var(--neon-glow), 0 0 20px rgba(0, 0, 0, 0.8);
+            transform: scale(1.08);
+        }
+        #player-widget .player-btn:active {
+            transform: scale(0.92);
+        }
+        #player-widget .player-btn svg {
+            width: 22px;
+            height: 22px;
+            fill: currentColor;
+            filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.1));
+        }
+        #player-widget .player-btn.play-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+        #info-widget {
+            top: 40px;
+            left: 100px;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(12px);
+            border: none;
+            border-radius: 16px;
+            padding: 12px 24px;
+            min-width: 180px;
+            color: white;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 4px;
+            z-index: 9997;
+            pointer-events: none;
+        }
+        #info-widget .track-title {
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
+            white-space: nowrap;
+            font-size: 20px;
+        }
+        #info-widget .artist-name {
+            color: var(--neon-red);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            opacity: 0.9;
+            font-size: 13px;
+        }
+        #progress-widget {
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            border: none;
+            border-radius: 40px;
+            padding: 8px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 9997;
+            min-width: 260px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+            pointer-events: all;
+            height: 44px;
+        }
+        #progress-widget .time-label {
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            min-width: 50px;
+            font-variant-numeric: tabular-nums;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+        #progress-widget .progress-track {
+            flex: 1;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+            min-width: 80px;
+        }
+        #progress-widget .progress-fill {
+            height: 100%;
+            background: var(--neon-red);
+            box-shadow: 0 0 8px var(--neon-red);
+            border-radius: 4px;
+            width: 0%;
+            position: relative;
+        }
+        #progress-widget .progress-pointer {
+            position: absolute;
+            right: -5px;
+            top: -5px;
+            width: 12px;
+            height: 12px;
+            background: var(--neon-red);
+            transform: rotate(45deg);
+            border-radius: 2px;
+            box-shadow: 0 0 12px var(--neon-red);
+        }
+        #volume-widget {
+            bottom: 60px;
+            right: 30px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            border: none;
+            border-radius: 40px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 9997;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+            pointer-events: all;
+            height: 44px;
+        }
+        #volume-widget .vol-icon {
+            color: var(--neon-red);
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        #volume-widget .vol-slider {
+            flex: 1;
+            min-width: 60px;
+            height: 4px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #volume-widget .vol-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            background: var(--neon-red);
+            transform: rotate(45deg);
+            border-radius: 2px;
+            box-shadow: 0 0 10px var(--neon-red);
+            cursor: pointer;
+        }
+        #volume-widget .vol-slider::-moz-range-thumb {
+            width: 14px;
+            height: 14px;
+            background: var(--neon-red);
+            transform: rotate(45deg);
+            border-radius: 2px;
+            box-shadow: 0 0 10px var(--neon-red);
+            cursor: pointer;
+            border: none;
+        }
+        #playlist-widget {
+            top: 120px;
+            right: 30px;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(16px);
+            border: none;
+            border-radius: 20px;
+            padding: 14px 16px 16px 16px;
+            z-index: 9995;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+            pointer-events: all;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            overflow: hidden;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            width: 280px;
+            height: 340px;
+        }
+        #playlist-widget.hidden {
+            opacity: 0;
+            transform: scale(0.95);
+            pointer-events: none !important;
+        }
+        #playlist-widget.edit-mode {
+            overflow: visible !important;
+        }
+        #playlist-widget .pl-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.5);
+            letter-spacing: 1.5px;
+            font-weight: 600;
+            text-transform: uppercase;
+            flex-shrink: 0;
+            font-size: 9px;
+        }
+        #playlist-widget .pl-search {
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid var(--neon-border-light);
+            border-radius: 30px;
+            padding: 3px 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        #playlist-widget .pl-search input {
+            background: transparent;
+            border: none;
+            color: white;
+            outline: none;
+            font-size: 11px;
+            width: 80px;
+        }
+        #playlist-widget .pl-search input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+        #playlist-widget .pl-search i {
+            color: var(--neon-red);
+            font-size: 11px;
+        }
+        #playlist-widget .pl-list {
+            overflow-y: auto;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding-right: 4px;
+        }
+        #playlist-widget .pl-list::-webkit-scrollbar {
+            width: 2px;
+        }
+        #playlist-widget .pl-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+        #playlist-widget .pl-list::-webkit-scrollbar-thumb {
+            background: var(--neon-red);
+            border-radius: 4px;
+            box-shadow: 0 0 6px var(--neon-glow);
+        }
+        #playlist-widget .pl-list {
+            scrollbar-width: thin;
+            scrollbar-color: var(--neon-red) rgba(255, 255, 255, 0.05);
+        }
+        .pl-item {
+            display: grid;
+            grid-template-columns: 24px 1fr 28px;
+            align-items: center;
+            padding: 4px 6px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.1s;
+            background: rgba(0, 0, 0, 0.3);
+            color: #ddd;
+            font-size: 12px;
+        }
+        .pl-item:hover {
+            background: var(--neon-dim);
+        }
+        .pl-item.active-song {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--neon-red);
+            box-shadow: 0 0 6px var(--neon-glow);
+        }
+        .pl-item .pl-num {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 10px;
+        }
+        .pl-item .pl-name {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-weight: 400;
+        }
+        .pl-item .pl-dl {
+            color: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: center;
+            background: none;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        .pl-item .pl-dl:hover {
+            color: var(--neon-red);
+            background: var(--neon-dim);
+            text-shadow: 0 0 6px var(--neon-glow);
+        }
+        #settings-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            bottom: 20px;
+            width: 400px;
+            max-width: calc(100vw - 40px);
+            background: rgba(0, 0, 0, 0.92);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--neon-border);
+            border-radius: 24px;
+            z-index: 10000;
+            transform: scale(0.95) translateY(10px);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+            padding: 30px 24px;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        #settings-panel.open {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+            pointer-events: all;
+        }
+        #settings-panel::-webkit-scrollbar {
+            width: 4px;
+        }
+        #settings-panel::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        #settings-panel::-webkit-scrollbar-thumb {
+            background: var(--neon-red);
+            border-radius: 4px;
+        }
+        .settings-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--neon-border-light);
+            flex-shrink: 0;
+        }
+        .settings-header h2 {
+            color: white;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        .settings-close-btn {
+            width: 36px;
+            height: 36px;
+            background: var(--neon-dim);
+            border: 1px solid var(--neon-border);
+            border-radius: 50%;
+            cursor: pointer;
+            color: white;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+            flex-shrink: 0;
+            font-family: Arial, sans-serif;
+            font-weight: 300;
+            line-height: 1;
+        }
+        .settings-close-btn:hover {
+            background: var(--neon-red);
+            transform: rotate(90deg);
+        }
+        .settings-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .settings-main {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .setting-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: 0.3s;
+        }
+        .setting-item:hover {
+            border-color: var(--neon-border-light);
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .setting-item .label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .setting-item .setting-input {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--neon-border-light);
+            border-radius: 8px;
+            padding: 6px 12px;
+            color: white;
+            font-size: 14px;
+            outline: none;
+            width: 160px;
+            transition: 0.3s;
+        }
+        .setting-item .setting-input:focus {
+            border-color: var(--neon-red);
+            box-shadow: 0 0 12px var(--neon-glow);
+            background: rgba(255, 255, 255, 0.12);
+        }
+        .setting-item .setting-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-slider {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            transition: 0.3s;
+        }
+        .toggle-slider::before {
+            content: "";
+            position: absolute;
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+        .toggle-switch input:checked+.toggle-slider {
+            background: var(--neon-red);
+        }
+        .toggle-switch input:checked+.toggle-slider::before {
+            transform: translateX(20px);
+        }
+        .color-picker-wrapper {
+            position: relative;
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
+            cursor: pointer;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            transition: border 0.2s;
+            background: var(--neon-red);
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.6);
+        }
+        .color-picker-wrapper:hover {
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+        .color-picker-wrapper input[type="color"] {
+            position: absolute;
+            top: -6px;
+            left: -6px;
+            width: calc(100% + 12px);
+            height: calc(100% + 12px);
+            padding: 0;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            background: transparent;
+            opacity: 0;
+        }
+
+        .opacity-slider-wrap {
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .opacity-slider-wrap .label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            font-weight: 500;
+            flex-shrink: 0;
+        }
+        .opacity-slider-wrap input[type="range"] {
+            flex: 1;
+            min-width: 80px;
+            height: 4px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .opacity-slider-wrap input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            background: var(--neon-red);
+            transform: rotate(45deg);
+            border-radius: 2px;
+            box-shadow: 0 0 10px var(--neon-glow);
+            cursor: pointer;
+        }
+        .opacity-slider-wrap input[type="range"]::-moz-range-thumb {
+            width: 14px;
+            height: 14px;
+            background: var(--neon-red);
+            transform: rotate(45deg);
+            border-radius: 2px;
+            box-shadow: 0 0 10px var(--neon-glow);
+            cursor: pointer;
+            border: none;
+        }
+
+        .settings-eq-modes {
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+        .settings-eq-modes .eq-modes-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.6);
+            letter-spacing: 1.5px;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 11px;
+        }
+        .settings-eq-modes .eq-mode-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        .settings-eq-modes .eq-mode-btn {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 6px;
+            padding: 6px 14px;
+            color: rgba(255,255,255,0.7);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: 0.2s;
+            flex: 1;
+            text-align: center;
+        }
+        .settings-eq-modes .eq-mode-btn:hover {
+            background: var(--neon-dim);
+            border-color: var(--neon-border);
+        }
+        .settings-eq-modes .eq-mode-btn.active {
+            background: var(--neon-red);
+            color: white;
+            border-color: var(--neon-red);
+            box-shadow: 0 0 16px var(--neon-glow);
+        }
+        .settings-eq {
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+        .settings-eq .eq-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.6);
+            letter-spacing: 1.5px;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 11px;
+        }
+        .settings-eq .eq-header .eq-reset {
+            background: none;
+            border: none;
+            color: var(--neon-red);
+            cursor: pointer;
+            transition: 0.2s;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-size: 12px;
+        }
+        .settings-eq .eq-header .eq-reset:hover {
+            background: var(--neon-dim);
+            text-shadow: 0 0 8px var(--neon-glow);
+        }
+        .settings-eq .eq-sliders {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            align-items: stretch;
+            height: 160px;
+        }
+        .settings-eq .eq-band {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            flex: 1;
+            min-width: 0;
+        }
+        .settings-eq .eq-band span {
+            color: rgba(255, 255, 255, 0.5);
+            letter-spacing: 0.5px;
+            font-size: 9px;
+            flex-shrink: 0;
+        }
+        .settings-eq .eq-band input {
+            -webkit-appearance: slider-vertical;
+            appearance: slider-vertical;
+            writing-mode: bt-lr;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            cursor: pointer;
+            outline: none;
+            flex: 1;
+            width: 100%;
+        }
+        .settings-eq .eq-band input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            background: var(--neon-red);
+            transform: rotate(45deg);
+            border-radius: 2px;
+            box-shadow: 0 0 10px var(--neon-glow);
+            cursor: pointer;
+            border: none;
+            width: 14px;
+            height: 14px;
+        }
+        .settings-eq .eq-band input::-moz-range-thumb {
+            background: var(--neon-red);
+            transform: rotate(45deg);
+            border-radius: 2px;
+            box-shadow: 0 0 10px var(--neon-glow);
+            cursor: pointer;
+            border: none;
+            width: 14px;
+            height: 14px;
+        }
+        .about-section {
+            margin-top: 0;
+            padding: 16px 18px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: 0.3s;
+        }
+        .about-section:hover {
+            border-color: var(--neon-border-light);
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .about-section .about-title {
+            color: var(--neon-red);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .about-section .about-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .about-section .about-row:last-child {
+            border-bottom: none;
+        }
+        .about-section .about-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 13px;
+        }
+        .about-section .about-value {
+            color: white;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        #settings-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+        #settings-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        #visualizer-widget {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 1 !important;
+            background: transparent !important;
+            backdrop-filter: none !important;
+            border: none !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            pointer-events: none !important;
+            display: flex !important;
+            overflow: hidden !important;
+            opacity: var(--visualizer-opacity, 0.3);
+        }
+        #visualizer-widget canvas {
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
+            background: transparent !important;
+            transition: opacity 0.3s ease;
+        }
+        #visualizer-widget.mode-off canvas {
+            opacity: 0;
+        }
+
+        @media (max-width: 700px) {
+            #settings-top-btn {
+                width: 40px;
+                height: 40px;
+                top: 12px;
+                right: 12px;
+            }
+            #settings-panel {
+                width: calc(100% - 40px);
+                top: 20px;
+                right: 20px;
+                bottom: 20px;
+                border-radius: 20px;
+                padding: 20px 16px;
+            }
+            .setting-item .setting-input {
+                width: 100px;
+                font-size: 12px;
+            }
+            .opacity-slider-wrap {
+                flex-wrap: wrap;
+            }
+            .opacity-slider-wrap input[type="range"] {
+                min-width: 60px;
+            }
+            #playlist-widget {
+                width: 200px !important;
+                right: 10px !important;
+                top: 100px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button id="settings-top-btn" title="Настройки" class="widget-wrapper">
+        <img src="/media/icons/settings.svg" alt="settings" class="btn-icon" />
+        <div class="edit-frame">
+            <div class="edit-controls">
+                <img src="/media/icons/move.svg" alt="move" class="move-btn" />
+                <img src="/media/icons/rotate.svg" alt="rotate" class="rotate-btn" />
+                <img src="/media/icons/resize.svg" alt="resize" class="resize-btn" />
+            </div>
+        </div>
+    </button>
+
+    <div id="player-widget" class="widget-wrapper">
+        <div class="edit-frame">
+            <div class="edit-controls">
+                <img src="/media/icons/move.svg" alt="move" class="move-btn" />
+                <img src="/media/icons/rotate.svg" alt="rotate" class="rotate-btn" />
+                <img src="/media/icons/resize.svg" alt="resize" class="resize-btn" />
+            </div>
+        </div>
+        <button class="player-btn" id="shuffleBtn" title="Рандом">
+            <svg viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm0.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg>
+        </button>
+        <button class="player-btn" id="prevBtn" title="Назад">
+            <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+        </button>
+        <button class="player-btn play-btn" id="playBtn" title="Играть">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+        <button class="player-btn" id="nextBtn" title="Далее">
+            <svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+        </button>
+        <button class="player-btn" id="repeatBtn" title="Повтор">
+            <svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg>
+        </button>
+    </div>
+
+    <div id="info-widget" class="widget-wrapper">
+        <div class="edit-frame">
+            <div class="edit-controls">
+                <img src="/media/icons/move.svg" alt="move" class="move-btn" />
+                <img src="/media/icons/rotate.svg" alt="rotate" class="rotate-btn" />
+                <img src="/media/icons/resize.svg" alt="resize" class="resize-btn" />
+            </div>
+        </div>
+        <div class="track-title" id="widget-track-title">—</div>
+        <div class="artist-name" id="widget-artist-name">—</div>
+    </div>
+
+    <div id="progress-widget" class="widget-wrapper">
+        <div class="edit-frame">
+            <div class="edit-controls">
+                <img src="/media/icons/move.svg" alt="move" class="move-btn" />
+                <img src="/media/icons/rotate.svg" alt="rotate" class="rotate-btn" />
+                <img src="/media/icons/resize.svg" alt="resize" class="resize-btn" />
+            </div>
+        </div>
+        <span class="time-label" id="widget-current-time">0:00</span>
+        <div class="progress-track" id="widget-progress-track">
+            <div class="progress-fill" id="widget-progress-fill">
+                <div class="progress-pointer"></div>
+            </div>
+        </div>
+        <span class="time-label" id="widget-total-time">0:00</span>
+    </div>
+
+    <div id="volume-widget" class="widget-wrapper">
+        <div class="edit-frame">
+            <div class="edit-controls">
+                <img src="/media/icons/move.svg" alt="move" class="move-btn" />
+                <img src="/media/icons/rotate.svg" alt="rotate" class="rotate-btn" />
+                <img src="/media/icons/resize.svg" alt="resize" class="resize-btn" />
+            </div>
+        </div>
+        <i class="fa-solid fa-volume-high vol-icon" id="widget-vol-icon"></i>
+        <input type="range" class="vol-slider" id="widget-vol-slider" min="0" max="100" value="70" step="0.5" />
+    </div>
+
+    <div id="playlist-widget" class="widget-wrapper">
+        <div class="edit-frame">
+            <div class="edit-controls">
+                <img src="/media/icons/move.svg" alt="move" class="move-btn" />
+                <img src="/media/icons/rotate.svg" alt="rotate" class="rotate-btn" />
+                <img src="/media/icons/resize.svg" alt="resize" class="resize-btn" />
+            </div>
+        </div>
+        <div class="pl-header">
+            <span>📋 Плейлист</span>
+            <div class="pl-search">
+                <i class="fa-solid fa-search"></i>
+                <input type="text" id="widget-search" placeholder="Поиск..." />
+            </div>
+        </div>
+        <div class="pl-list" id="widget-pl-list"></div>
+    </div>
+
+    <div id="visualizer-widget" class="mode-off">
+        <canvas id="visualizer-canvas"></canvas>
+    </div>
+
+    <div id="settings-overlay"></div>
+    <div id="settings-panel">
+        <div class="settings-header">
+            <h2 id="settings-title">Настройки</h2>
+            <button class="settings-close-btn" id="settings-close-btn">×</button>
+        </div>
+        <div class="settings-content">
+            <div class="settings-main">
+                <div class="setting-item">
+                    <span class="label">Название сайта</span>
+                    <input type="text" class="setting-input" id="siteTitleInput" placeholder="None" value="" />
+                </div>
+                <div class="setting-item">
+                    <span class="label">Режим редактирования</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="editModeToggle" />
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <span class="label">Акцент</span>
+                    <div class="color-picker-wrapper" id="colorPickerWrapper">
+                        <input type="color" id="accentColorPicker" value="#ff001c" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="opacity-slider-wrap">
+                <span class="label">Прозрачность визуализатора</span>
+                <input type="range" id="visualizerOpacity" min="0" max="100" value="30" />
+            </div>
+
+            <div class="setting-item">
+                <span class="label">Плейлист</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="playlistToggle" checked />
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+
+            <div class="settings-eq-modes">
+                <div class="eq-modes-header">
+                    <span>Визуализатор</span>
+                </div>
+                <div class="eq-mode-buttons" id="eqModeButtons">
+                    <button class="eq-mode-btn active" data-mode="0">Выкл</button>
+                    <button class="eq-mode-btn" data-mode="1">1</button>
+                    <button class="eq-mode-btn" data-mode="2">2</button>
+                    <button class="eq-mode-btn" data-mode="3">3</button>
+                </div>
+            </div>
+
+            <div class="settings-eq">
+                <div class="eq-header">
+                    <span>Эквалайзер</span>
+                    <button class="eq-reset" id="widget-eq-reset">⟳ сброс</button>
+                </div>
+                <div class="eq-sliders" id="widget-eq-sliders"></div>
+            </div>
+            <div class="about-section">
+                <div class="about-title">О плеере</div>
+                <div class="about-row">
+                    <span class="about-label">Версия</span>
+                    <span class="about-value">2.0.7</span>
+                </div>
+                <div class="about-row">
+                    <span class="about-label">Разработчик</span>
+                    <span class="about-value">vad5m_dev</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <audio id="audio-player" preload="metadata" style="display:none"></audio>
+
+    <script>
+        (function() {
+            // Все настройки хранятся на сервере в config.json
+            const CONFIG_API = '/api/config';
+
+            const widgetIds = ['settings', 'player', 'info', 'progress', 'volume', 'playlist'];
+
+            // Состояние виджетов
+            let widgetState = {
+                settings: { x: 20, y: 20, width: 48, height: 48, rotation: 0, scale: 1, fontScale: 1 },
+                player: { x: 100, y: 100, width: 280, height: 70, rotation: 0, scale: 1, fontScale: 1 },
+                info: { x: 120, y: 40, width: 220, height: 80, rotation: 0, scale: 1, fontScale: 1 },
+                progress: { x: 0, y: 0, width: 400, height: 44, rotation: 0, scale: 1, fontScale: 1 },
+                volume: { x: 0, y: 0, width: 180, height: 44, rotation: 0, scale: 1, fontScale: 1 },
+                playlist: { x: 0, y: 0, width: 280, height: 340, rotation: 0, scale: 1, fontScale: 1 },
+            };
+
+            let configData = {
+                accent_color: '#ff001c',
+                edit_mode: false,
+                site_title: '',
+                visualizer_opacity: 30,
+                playlist_visible: true,
+                visualizer_mode: 0,
+                eq_gains: [0, 0, 0, 0, 0, 0, 0],
+                widgets: widgetState
+            };
+
+            let configLoaded = false;
+            let saveTimeout = null;
+
+            // DOM элементы
+            const widgets = {};
+            for (const id of widgetIds) {
+                widgets[id] = document.getElementById(id + '-widget') || document.getElementById('settings-top-btn');
+            }
+
+            // Загрузка конфига с сервера
+            async function loadConfigFromServer() {
+                try {
+                    const res = await fetch(CONFIG_API);
+                    if (!res.ok) throw new Error('Network error');
+                    const data = await res.json();
+                    configData = data;
+                    if (data.widgets) {
+                        for (const id of widgetIds) {
+                            if (data.widgets[id]) {
+                                widgetState[id] = data.widgets[id];
+                            }
+                        }
+                    }
+                    configLoaded = true;
+                    return true;
+                } catch (e) {
+                    console.warn('Failed to load config from server, using defaults');
+                    return false;
+                }
+            }
+
+            // Сохранение конфига на сервер
+            async function saveConfigToServer() {
+                if (!configLoaded) return;
+                if (saveTimeout) {
+                    clearTimeout(saveTimeout);
+                    saveTimeout = null;
+                }
+                // Обновляем widgets в configData
+                configData.widgets = {};
+                for (const id of widgetIds) {
+                    configData.widgets[id] = { ...widgetState[id] };
+                }
+                try {
+                    const res = await fetch(CONFIG_API, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(configData)
+                    });
+                    if (!res.ok) throw new Error('Network error');
+                } catch (e) {
+                    console.warn('Failed to save config to server');
+                }
+            }
+
+            function scheduleSave() {
+                if (saveTimeout) clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(saveConfigToServer, 300);
+            }
+
+            function applyWidgetState(id) {
+                const w = widgetState[id];
+                const el = widgets[id];
+                if (!el) return;
+                el.style.left = w.x + 'px';
+                el.style.top = w.y + 'px';
+                el.style.right = 'auto';
+                el.style.bottom = 'auto';
+                el.style.transform = `rotate(${w.rotation}deg)`;
+
+                if (id === 'settings') {
+                    el.style.width = w.width + 'px';
+                    el.style.height = w.height + 'px';
+                    const icon = el.querySelector('.btn-icon');
+                    if (icon) {
+                        let size = Math.min(w.width, w.height) * 0.58;
+                        size = Math.max(16, size);
+                        icon.style.width = size + 'px';
+                        icon.style.height = size + 'px';
+                    }
+                } else if (id === 'player') {
+                    scalePlayer(el, w.scale || 1);
+                } else if (id === 'info') {
+                    el.style.width = w.width + 'px';
+                    el.style.height = w.height + 'px';
+                    applyInfoScale(el, w.fontScale || 1);
+                } else if (id === 'progress') {
+                    el.style.width = w.width + 'px';
+                } else if (id === 'volume') {
+                    el.style.width = w.width + 'px';
+                } else if (id === 'playlist') {
+                    el.style.width = w.width + 'px';
+                    el.style.height = w.height + 'px';
+                    applyPlaylistScale(el, w.fontScale || 1);
+                }
+            }
+
+            function scalePlayer(el, scale) {
+                const btns = el.querySelectorAll('.player-btn');
+                const base = 44;
+                btns.forEach(btn => {
+                    const s = base * scale;
+                    btn.style.width = s + 'px';
+                    btn.style.height = s + 'px';
+                    const svg = btn.querySelector('svg');
+                    if (svg) {
+                        const isPlay = btn.classList.contains('play-btn');
+                        const bs = isPlay ? 20 : 22;
+                        const ns = bs * scale;
+                        svg.style.width = ns + 'px';
+                        svg.style.height = ns + 'px';
+                    }
+                });
+                el.style.gap = (6 * scale) + 'px';
+            }
+
+            function applyInfoScale(el, fontScale) {
+                const title = el.querySelector('.track-title');
+                const artist = el.querySelector('.artist-name');
+                if (title) title.style.fontSize = (20 * fontScale) + 'px';
+                if (artist) artist.style.fontSize = (13 * fontScale) + 'px';
+                el.style.padding = (12 * fontScale) + 'px ' + (24 * fontScale) + 'px';
+                el.style.gap = (4 * fontScale) + 'px';
+                el.style.borderRadius = (16 * fontScale) + 'px';
+            }
+
+            function applyPlaylistScale(el, fontScale) {
+                const header = el.querySelector('.pl-header');
+                const searchDiv = el.querySelector('.pl-search');
+                const searchInput = el.querySelector('.pl-search input');
+                const searchIcon = el.querySelector('.pl-search i');
+                const items = el.querySelectorAll('.pl-item');
+                if (header) header.style.fontSize = (9 * fontScale) + 'px';
+                if (searchDiv) {
+                    searchDiv.style.padding = (3 * fontScale) + 'px ' + (10 * fontScale) + 'px';
+                    searchDiv.style.gap = (6 * fontScale) + 'px';
+                }
+                if (searchInput) {
+                    searchInput.style.fontSize = (11 * fontScale) + 'px';
+                    searchInput.style.width = (80 * fontScale) + 'px';
+                }
+                if (searchIcon) searchIcon.style.fontSize = (11 * fontScale) + 'px';
+                items.forEach(item => {
+                    item.style.fontSize = (12 * fontScale) + 'px';
+                    item.style.padding = (4 * fontScale) + 'px ' + (6 * fontScale) + 'px';
+                    item.style.borderRadius = (6 * fontScale) + 'px';
+                    item.style.gridTemplateColumns = (24 * fontScale) + 'px 1fr ' + (28 * fontScale) + 'px';
+                    const num = item.querySelector('.pl-num');
+                    const dl = item.querySelector('.pl-dl');
+                    if (num) num.style.fontSize = (10 * fontScale) + 'px';
+                    if (dl) {
+                        dl.style.fontSize = (12 * fontScale) + 'px';
+                        dl.style.width = (24 * fontScale) + 'px';
+                        dl.style.height = (24 * fontScale) + 'px';
+                    }
+                });
+                el.style.padding = (14 * fontScale) + 'px ' + (16 * fontScale) + 'px ' + (16 * fontScale) + 'px';
+                el.style.gap = (8 * fontScale) + 'px';
+                el.style.borderRadius = (20 * fontScale) + 'px';
+            }
+
+            function updateAllWidgets() {
+                for (const id of widgetIds) {
+                    applyWidgetState(id);
+                }
+            }
+
+            // ------ Drag, Rotate, Resize ------
+            function makeDraggable(widgetId, moveBtn) {
+                let dragging = false, offX = 0, offY = 0;
+                moveBtn.addEventListener('mousedown', function(e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    if (!document.getElementById('editModeToggle').checked) return;
+                    const w = widgetState[widgetId];
+                    const el = widgets[widgetId];
+                    const rect = el.getBoundingClientRect();
+                    offX = e.clientX - rect.left;
+                    offY = e.clientY - rect.top;
+                    dragging = true;
+                    document.addEventListener('mousemove', onMove);
+                    document.addEventListener('mouseup', onUp);
+                });
+                function onMove(e) {
+                    if (!dragging) return;
+                    const w = widgetState[widgetId];
+                    const el = widgets[widgetId];
+                    let nx = e.clientX - offX;
+                    let ny = e.clientY - offY;
+                    nx = Math.max(0, Math.min(nx, window.innerWidth - el.offsetWidth));
+                    ny = Math.max(0, Math.min(ny, window.innerHeight - el.offsetHeight));
+                    w.x = nx;
+                    w.y = ny;
+                    el.style.left = nx + 'px';
+                    el.style.top = ny + 'px';
+                }
+                function onUp() {
+                    if (dragging) { dragging = false; scheduleSave(); }
+                    document.removeEventListener('mousemove', onMove);
+                    document.removeEventListener('mouseup', onUp);
+                }
+            }
+
+            function makeRotatable(widgetId, rotateBtn) {
+                let rotating = false, startAngle = 0, startRotation = 0, total = 0, prev = 0;
+                rotateBtn.addEventListener('mousedown', function(e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    if (!document.getElementById('editModeToggle').checked) return;
+                    const w = widgetState[widgetId];
+                    const el = widgets[widgetId];
+                    const rect = el.getBoundingClientRect();
+                    const cx = rect.left + rect.width / 2;
+                    const cy = rect.top + rect.height / 2;
+                    startAngle = Math.atan2(e.clientY - cy, e.clientX - cx);
+                    startRotation = w.rotation;
+                    total = 0;
+                    prev = startAngle;
+                    rotating = true;
+                    document.addEventListener('mousemove', onRotate);
+                    document.addEventListener('mouseup', onRotateUp);
+                });
+                function onRotate(e) {
+                    if (!rotating) return;
+                    const w = widgetState[widgetId];
+                    const el = widgets[widgetId];
+                    const rect = el.getBoundingClientRect();
+                    const cx = rect.left + rect.width / 2;
+                    const cy = rect.top + rect.height / 2;
+                    const cur = Math.atan2(e.clientY - cy, e.clientX - cx);
+                    let delta = cur - prev;
+                    if (delta > Math.PI) delta -= 2 * Math.PI;
+                    if (delta < -Math.PI) delta += 2 * Math.PI;
+                    total += delta;
+                    prev = cur;
+                    w.rotation = startRotation + total * (180 / Math.PI);
+                    el.style.transform = `rotate(${w.rotation}deg)`;
+                }
+                function onRotateUp() {
+                    if (rotating) {
+                        rotating = false;
+                        const w = widgetState[widgetId];
+                        let r = Math.round(w.rotation / 30) * 30;
+                        r = ((r % 360) + 360) % 360;
+                        w.rotation = r;
+                        widgets[widgetId].style.transform = `rotate(${r}deg)`;
+                        scheduleSave();
+                    }
+                    document.removeEventListener('mousemove', onRotate);
+                    document.removeEventListener('mouseup', onRotateUp);
+                }
+            }
+
+            function makeResizable(widgetId, resizeBtn) {
+                let resizing = false, startX = 0, startY = 0, startW = 0, startH = 0, startScale = 1, startFontScale = 1;
+                resizeBtn.addEventListener('mousedown', function(e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    if (!document.getElementById('editModeToggle').checked) return;
+                    const w = widgetState[widgetId];
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    startW = w.width;
+                    startH = w.height;
+                    startScale = w.scale || 1;
+                    startFontScale = w.fontScale || 1;
+                    resizing = true;
+                    document.addEventListener('mousemove', onResize);
+                    document.addEventListener('mouseup', onResizeUp);
+                });
+                function onResize(e) {
+                    if (!resizing) return;
+                    const w = widgetState[widgetId];
+                    const el = widgets[widgetId];
+                    const dx = e.clientX - startX;
+                    const dy = e.clientY - startY;
+
+                    if (widgetId === 'settings') {
+                        let nw = startW + dx;
+                        let nh = startH + dy;
+                        nw = Math.max(40, Math.min(nw, window.innerWidth - 20));
+                        nh = Math.max(40, Math.min(nh, window.innerHeight - 20));
+                        w.width = nw;
+                        w.height = nh;
+                        el.style.width = nw + 'px';
+                        el.style.height = nh + 'px';
+                        const icon = el.querySelector('.btn-icon');
+                        if (icon) {
+                            let s = Math.min(nw, nh) * 0.58;
+                            s = Math.max(16, s);
+                            icon.style.width = s + 'px';
+                            icon.style.height = s + 'px';
+                        }
+                    } else if (widgetId === 'player') {
+                        let ns = startScale + dx / 200;
+                        ns = Math.max(0.3, Math.min(3, ns));
+                        w.scale = ns;
+                        scalePlayer(el, ns);
+                        const rect = el.getBoundingClientRect();
+                        w.width = rect.width;
+                        w.height = rect.height;
+                    } else if (widgetId === 'info') {
+                        let nw = startW + dx;
+                        let nh = startH + dy;
+                        nw = Math.max(100, Math.min(nw, window.innerWidth - 20));
+                        nh = Math.max(40, Math.min(nh, window.innerHeight - 20));
+                        const scaleRatio = Math.min(nw / startW, nh / startH);
+                        let nfs = startFontScale * scaleRatio;
+                        nfs = Math.max(0.4, Math.min(2.5, nfs));
+                        w.fontScale = nfs;
+                        w.width = nw;
+                        w.height = nh;
+                        el.style.width = nw + 'px';
+                        el.style.height = nh + 'px';
+                        applyInfoScale(el, nfs);
+                    } else if (widgetId === 'progress') {
+                        let nw = startW + dx;
+                        nw = Math.max(200, Math.min(nw, window.innerWidth - 20));
+                        w.width = nw;
+                        el.style.width = nw + 'px';
+                    } else if (widgetId === 'volume') {
+                        let nw = startW + dx;
+                        nw = Math.max(120, Math.min(nw, window.innerWidth - 20));
+                        w.width = nw;
+                        el.style.width = nw + 'px';
+                    } else if (widgetId === 'playlist') {
+                        let nw = startW + dx;
+                        let nh = startH + dy;
+                        nw = Math.max(160, Math.min(nw, window.innerWidth - 20));
+                        nh = Math.max(150, Math.min(nh, window.innerHeight - 20));
+                        const scaleRatio = Math.min(nw / startW, nh / startH);
+                        let nfs = startFontScale * scaleRatio;
+                        nfs = Math.max(0.4, Math.min(2.5, nfs));
+                        w.fontScale = nfs;
+                        w.width = nw;
+                        w.height = nh;
+                        el.style.width = nw + 'px';
+                        el.style.height = nh + 'px';
+                        applyPlaylistScale(el, nfs);
+                    }
+                }
+                function onResizeUp() {
+                    if (resizing) { resizing = false; scheduleSave(); }
+                    document.removeEventListener('mousemove', onResize);
+                    document.removeEventListener('mouseup', onResizeUp);
+                }
+            }
+
+            function initWidgetControls(widgetId) {
+                const el = widgets[widgetId];
+                if (!el) return;
+                const move = el.querySelector('.move-btn');
+                const rotate = el.querySelector('.rotate-btn');
+                const resize = el.querySelector('.resize-btn');
+                if (move) makeDraggable(widgetId, move);
+                if (rotate) makeRotatable(widgetId, rotate);
+                if (resize) makeResizable(widgetId, resize);
+            }
+
+            // ------ Настройки UI ------
+            const settingsPanel = document.getElementById('settings-panel');
+            const settingsOverlay = document.getElementById('settings-overlay');
+            const settingsClose = document.getElementById('settings-close-btn');
+
+            function openSettings() {
+                settingsPanel.classList.add('open');
+                settingsOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+            function closeSettings() {
+                settingsPanel.classList.remove('open');
+                settingsOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            document.getElementById('settings-top-btn').addEventListener('click', function(e) {
+                if (e.target.closest('.edit-controls')) return;
+                openSettings();
+            });
+            settingsClose.addEventListener('click', closeSettings);
+            settingsOverlay.addEventListener('click', closeSettings);
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && settingsPanel.classList.contains('open')) closeSettings();
+            });
+
+            // Edit Mode
+            document.getElementById('editModeToggle').addEventListener('change', function(e) {
+                configData.edit_mode = e.target.checked;
+                document.querySelectorAll('.widget-wrapper').forEach(el => {
+                    if (e.target.checked) {
+                        el.classList.add('edit-mode');
+                    } else {
+                        el.classList.remove('edit-mode');
+                    }
+                });
+                scheduleSave();
+            });
+
+            // Accent color
+            const colorPicker = document.getElementById('accentColorPicker');
+            const pickerWrapper = document.getElementById('colorPickerWrapper');
+            function setAccentColor(hex) {
+                document.documentElement.style.setProperty('--neon-red', hex);
+                const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+                document.documentElement.style.setProperty('--neon-glow', `rgba(${r},${g},${b},0.8)`);
+                document.documentElement.style.setProperty('--neon-dim', `rgba(${r},${g},${b},0.2)`);
+                document.documentElement.style.setProperty('--neon-border', `rgba(${r},${g},${b},0.4)`);
+                document.documentElement.style.setProperty('--neon-border-light', `rgba(${r},${g},${b},0.3)`);
+                pickerWrapper.style.background = hex;
+                configData.accent_color = hex;
+                scheduleSave();
+            }
+            colorPicker.addEventListener('input', (e) => setAccentColor(e.target.value));
+            pickerWrapper.addEventListener('click', (e) => { if (e.target !== colorPicker) colorPicker.click(); });
+
+            // Site title
+            document.getElementById('siteTitleInput').addEventListener('input', function(e) {
+                const title = e.target.value.trim();
+                if (title) {
+                    document.title = title;
+                } else {
+                    document.title = 'None';
+                }
+                configData.site_title = title;
+                scheduleSave();
+            });
+
+            // Visualizer opacity
+            document.getElementById('visualizerOpacity').addEventListener('input', function(e) {
+                const val = parseInt(e.target.value);
+                configData.visualizer_opacity = val;
+                document.documentElement.style.setProperty('--visualizer-opacity', val / 100);
+                scheduleSave();
+            });
+
+            // Playlist toggle
+            document.getElementById('playlistToggle').addEventListener('change', function(e) {
+                configData.playlist_visible = e.target.checked;
+                const widget = document.getElementById('playlist-widget');
+                if (widget) {
+                    if (!e.target.checked) widget.classList.add('hidden');
+                    else widget.classList.remove('hidden');
+                }
+                scheduleSave();
+            });
+
+            // Visualizer mode buttons
+            const modeButtons = document.querySelectorAll('.eq-mode-btn');
+            modeButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    modeButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    configData.visualizer_mode = parseInt(this.dataset.mode);
+                    scheduleSave();
+                    updateVisualizerVisibility();
+                    if (configData.visualizer_mode !== 0 && webaudioReady && !animFrameId) {
+                        animateVisualizer();
+                    }
+                });
+            });
+
+            // ------ Audio Player Logic ------
+            let songs = [], filteredSongs = [], currentIndex = 0, isPlaying = false, isShuffle = false, isRepeat = false;
+            let audioCtx = null, analyser = null, srcNode = null, dataArray = null, webaudioReady = false;
+            let eqFilters = [];
+            let eqBands = [
+                { freq: 60, gain: 0 }, { freq: 150, gain: 0 }, { freq: 400, gain: 0 }, { freq: 1000, gain: 0 },
+                { freq: 2400, gain: 0 }, { freq: 6000, gain: 0 }, { freq: 15000, gain: 0 },
+            ];
+            let searchQuery = '', isSeeking = false;
+
+            let visualizerMode = 0;
+            let animFrameId = null;
+            const visualizerEl = document.getElementById('visualizer-widget');
+            const visualizerCanvas = document.getElementById('visualizer-canvas');
+            const ctx = visualizerCanvas.getContext('2d');
+
+            const audio = document.getElementById('audio-player');
+            const playBtn = document.getElementById('playBtn');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const shuffleBtn = document.getElementById('shuffleBtn');
+            const repeatBtn = document.getElementById('repeatBtn');
+            const trackTitle = document.getElementById('widget-track-title');
+            const artistName = document.getElementById('widget-artist-name');
+            const currentTimeSpan = document.getElementById('widget-current-time');
+            const totalTimeSpan = document.getElementById('widget-total-time');
+            const progressFill = document.getElementById('widget-progress-fill');
+            const progressTrack = document.getElementById('widget-progress-track');
+            const volSlider = document.getElementById('widget-vol-slider');
+            const volIcon = document.getElementById('widget-vol-icon');
+            const plList = document.getElementById('widget-pl-list');
+            const searchInput = document.getElementById('widget-search');
+
+            function initCanvasSize() {
+                visualizerCanvas.width = window.innerWidth;
+                visualizerCanvas.height = window.innerHeight;
+                visualizerCanvas.style.width = '100%';
+                visualizerCanvas.style.height = '100%';
+            }
+            initCanvasSize();
+            window.addEventListener('resize', initCanvasSize);
+
+            function updateVisualizerVisibility() {
+                visualizerMode = configData.visualizer_mode || 0;
+                if (visualizerMode === 0) {
+                    visualizerEl.classList.add('mode-off');
+                    if (animFrameId) {
+                        cancelAnimationFrame(animFrameId);
+                        animFrameId = null;
+                    }
+                    ctx.clearRect(0, 0, visualizerCanvas.width, visualizerCanvas.height);
+                } else {
+                    visualizerEl.classList.remove('mode-off');
+                    if (!animFrameId && webaudioReady) {
+                        animateVisualizer();
+                    }
+                }
+                // Update button states
+                modeButtons.forEach(btn => {
+                    btn.classList.toggle('active', parseInt(btn.dataset.mode) === visualizerMode);
+                });
+            }
+
+            function renderEqSliders() {
+                const container = document.getElementById('widget-eq-sliders');
+                if (!container) return;
+                container.innerHTML = '';
+                const freqs = ['60Hz','150Hz','400Hz','1kHz','2.4kHz','6kHz','15kHz'];
+                const gains = configData.eq_gains || [0,0,0,0,0,0,0];
+                for (let i = 0; i < eqBands.length; i++) {
+                    eqBands[i].gain = gains[i] || 0;
+                    const div = document.createElement('div');
+                    div.className = 'eq-band';
+                    const label = document.createElement('span');
+                    label.textContent = freqs[i];
+                    const input = document.createElement('input');
+                    input.type = 'range';
+                    input.id = `eq-slider-${i}`;
+                    input.min = '-12';
+                    input.max = '12';
+                    input.value = eqBands[i].gain || 0;
+                    input.step = '0.5';
+                    input.setAttribute('orient', 'vertical');
+                    input.addEventListener('input', (e) => {
+                        const val = parseFloat(e.target.value);
+                        eqBands[i].gain = val;
+                        configData.eq_gains[i] = val;
+                        if (webaudioReady && eqFilters[i]) eqFilters[i].gain.value = val;
+                        scheduleSave();
+                    });
+                    div.appendChild(label);
+                    div.appendChild(input);
+                    container.appendChild(div);
+                }
+            }
+
+            function initEqualizer() {
+                if (!audioCtx || !srcNode) return;
+                if (eqFilters.length) {
+                    eqFilters.forEach(f => f.disconnect());
+                    srcNode.disconnect();
+                    srcNode.connect(analyser);
+                    analyser.connect(audioCtx.destination);
+                    eqFilters = [];
+                }
+                let prevNode = srcNode;
+                const gains = configData.eq_gains || [0,0,0,0,0,0,0];
+                for (let i = 0; i < eqBands.length; i++) {
+                    const filter = audioCtx.createBiquadFilter();
+                    filter.type = 'peaking';
+                    filter.frequency.value = eqBands[i].freq;
+                    filter.Q.value = 1.5;
+                    filter.gain.value = gains[i] || 0;
+                    eqFilters.push(filter);
+                    prevNode.connect(filter);
+                    prevNode = filter;
+                }
+                prevNode.connect(analyser);
+                analyser.connect(audioCtx.destination);
+            }
+
+            function resetEqualizer() {
+                for (let i = 0; i < eqBands.length; i++) {
+                    eqBands[i].gain = 0;
+                    configData.eq_gains[i] = 0;
+                    if (webaudioReady && eqFilters[i]) eqFilters[i].gain.value = 0;
+                    const slider = document.getElementById(`eq-slider-${i}`);
+                    if (slider) slider.value = '0';
+                }
+                scheduleSave();
+            }
+            document.getElementById('widget-eq-reset').addEventListener('click', resetEqualizer);
+
+            function initWebAudio() {
+                if (webaudioReady || !audio.src) return false;
+                try {
+                    const AC = window.AudioContext || window.webkitAudioContext;
+                    audioCtx = new AC();
+                    analyser = audioCtx.createAnalyser();
+                    analyser.fftSize = 512;
+                    dataArray = new Uint8Array(analyser.frequencyBinCount);
+                    srcNode = audioCtx.createMediaElementSource(audio);
+                    initEqualizer();
+                    webaudioReady = true;
+                    if (configData.visualizer_mode !== 0) {
+                        updateVisualizerVisibility();
+                    }
+                    return true;
+                } catch (e) { return false; }
+            }
+
+            function formatTime(sec) {
+                if (isNaN(sec) || sec === Infinity) return '0:00';
+                const m = Math.floor(sec / 60), s = Math.floor(sec % 60);
+                return `${m}:${s.toString().padStart(2,'0')}`;
+            }
+
+            function updateTrackDisplay() {
+                if (!songs.length || !songs[currentIndex]) { trackTitle.textContent = '—'; artistName.textContent = '—'; return; }
+                const song = songs[currentIndex];
+                const raw = song.name || song.file.replace(/\.[^/.]+$/, '');
+                let artist = 'Unknown Artist', title = raw;
+                if (raw.includes(' - ')) {
+                    const parts = raw.split(' - ');
+                    if (parts.length >= 2) { artist = parts[0].trim(); title = parts.slice(1).join(' - ').trim(); }
+                }
+                trackTitle.textContent = title || '—';
+                artistName.textContent = artist;
+            }
+
+            function loadSong(index) {
+                if (!songs.length) return;
+                if (index < 0) index = songs.length - 1;
+                if (index >= songs.length) index = 0;
+                currentIndex = index;
+                audio.src = `/music/${songs[currentIndex].file}`;
+                updateTrackDisplay();
+                renderPlaylist();
+                progressFill.style.width = '0%';
+                currentTimeSpan.textContent = '0:00';
+                totalTimeSpan.textContent = audio.duration ? formatTime(audio.duration) : '0:00';
+
+                setTimeout(() => {
+                    const activeItem = plList.querySelector('.pl-item.active-song');
+                    if (activeItem) {
+                        activeItem.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                    }
+                }, 100);
+            }
+
+            function togglePlay() {
+                if (!songs.length) return;
+                if (isPlaying) {
+                    audio.pause();
+                    isPlaying = false;
+                    playBtn.querySelector('svg').innerHTML = '<path d="M8 5v14l11-7z"/>';
+                } else {
+                    if (!webaudioReady && audio.src) initWebAudio();
+                    audio.play().catch(e => {});
+                    isPlaying = true;
+                    playBtn.querySelector('svg').innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+                }
+            }
+
+            function nextTrack() {
+                if (!songs.length) return;
+                if (isShuffle && songs.length > 1) {
+                    let ni; do { ni = Math.floor(Math.random() * songs.length); } while (ni === currentIndex);
+                    loadSong(ni);
+                } else loadSong(currentIndex + 1);
+                if (!isPlaying) togglePlay(); else audio.play().catch(e => {});
+            }
+
+            function prevTrack() {
+                if (!songs.length) return;
+                if (audio.currentTime > 3) { audio.currentTime = 0; updateProgress(); }
+                else {
+                    if (isShuffle && songs.length > 1) {
+                        let ni; do { ni = Math.floor(Math.random() * songs.length); } while (ni === currentIndex);
+                        loadSong(ni);
+                    } else loadSong(currentIndex - 1);
+                    if (!isPlaying) togglePlay(); else audio.play().catch(e => {});
+                }
+            }
+
+            function toggleShuffle() {
+                isShuffle = !isShuffle;
+                shuffleBtn.style.color = isShuffle ? 'var(--neon-red)' : 'rgba(255,255,255,0.6)';
+            }
+
+            function toggleRepeat() {
+                isRepeat = !isRepeat;
+                repeatBtn.style.color = isRepeat ? 'var(--neon-red)' : 'rgba(255,255,255,0.6)';
+            }
+
+            function updateProgress() {
+                if (!isSeeking && audio.duration && !isNaN(audio.duration)) {
+                    progressFill.style.width = (audio.currentTime / audio.duration * 100) + '%';
+                    currentTimeSpan.textContent = formatTime(audio.currentTime);
+                    totalTimeSpan.textContent = formatTime(audio.duration);
+                }
+            }
+
+            function seek(e) {
+                if (!audio.duration) return;
+                const rect = progressTrack.getBoundingClientRect();
+                let pct = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+                isSeeking = true;
+                audio.currentTime = pct * audio.duration;
+                progressFill.style.width = (pct * 100) + '%';
+                setTimeout(() => { isSeeking = false; }, 100);
+            }
+
+            function setVolume(val) {
+                const percent = parseFloat(val) / 100;
+                audio.volume = Math.min(1, Math.max(0, Math.pow(percent, 1.8)));
+                if (audio.volume === 0) volIcon.className = 'fa-solid fa-volume-off vol-icon';
+                else if (audio.volume < 0.1) volIcon.className = 'fa-solid fa-volume-low vol-icon';
+                else volIcon.className = 'fa-solid fa-volume-high vol-icon';
+            }
+
+            function toggleMute() {
+                if (audio.volume > 0) {
+                    audio.dataset.prevVol = audio.volume;
+                    audio.volume = 0; volSlider.value = 0; setVolume(0);
+                } else {
+                    let prev = parseFloat(audio.dataset.prevVol) || 0.7;
+                    audio.volume = prev;
+                    volSlider.value = Math.min(100, Math.max(0, Math.round(Math.pow(prev, 1/1.8) * 100)));
+                    setVolume(volSlider.value);
+                }
+            }
+
+            function renderPlaylist() {
+                const display = filteredSongs.length ? filteredSongs : songs;
+                if (!display.length) {
+                    plList.innerHTML = '<div style="padding:8px;color:rgba(255,255,255,0.4);text-align:center;">Нет треков</div>';
+                    return;
+                }
+                plList.innerHTML = display.map((s, i) => {
+                    const raw = s.name || s.file.replace(/\.[^/.]+$/, '');
+                    const origIdx = songs.findIndex(o => o.file === s.file);
+                    return `<div class="pl-item" data-index="${origIdx}">
+                        <span class="pl-num">${(i+1).toString().padStart(2,'0')}</span>
+                        <span class="pl-name">${raw}</span>
+                        <button class="pl-dl" data-file="${s.file}" data-name="${raw}"><i class="fa-solid fa-download"></i></button>
+                    </div>`;
+                }).join('');
+                document.querySelectorAll('.pl-item').forEach(el => {
+                    const idx = parseInt(el.dataset.index);
+                    el.addEventListener('click', (e) => {
+                        if (e.target.closest('.pl-dl')) return;
+                        loadSong(idx);
+                        if (!isPlaying) togglePlay(); else audio.play().catch(e => {});
+                    });
+                    if (idx === currentIndex) el.classList.add('active-song');
+                });
+                document.querySelectorAll('.pl-dl').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const a = document.createElement('a');
+                        a.href = `/music/${btn.dataset.file}`;
+                        a.download = btn.dataset.name || btn.dataset.file;
+                        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+                    });
+                });
+                const fs = widgetState.playlist.fontScale || 1;
+                applyPlaylistScale(plList.parentElement, fs);
+            }
+
+            function filterSongs() {
+                const q = searchQuery.trim().toLowerCase();
+                filteredSongs = q ? songs.filter(s => (s.name || s.file.replace(/\.[^/.]+$/, '')).toLowerCase().includes(q)) : [...songs];
+                renderPlaylist();
+            }
+
+            async function fetchSongs() {
+                try {
+                    const res = await fetch('/api/music-list');
+                    if (!res.ok) throw new Error();
+                    songs = (await res.json()) || [];
+                    filteredSongs = [...songs];
+                    if (songs.length) loadSong(0);
+                    renderPlaylist();
+                    renderEqSliders();
+                } catch (err) {
+                    plList.innerHTML = '<div style="padding:8px;color:rgba(255,0,0,0.6);">❌ Ошибка загрузки</div>';
+                    renderEqSliders();
+                }
+            }
+
+            function drawVisualizer() {
+                if (!webaudioReady || !analyser || configData.visualizer_mode === 0) {
+                    ctx.clearRect(0, 0, visualizerCanvas.width, visualizerCanvas.height);
+                    return;
+                }
+                analyser.getByteFrequencyData(dataArray);
+                const w = visualizerCanvas.width;
+                const h = visualizerCanvas.height;
+                ctx.clearRect(0, 0, w, h);
+
+                const step = 4;
+                const count = Math.floor(dataArray.length / step);
+                const barWidth = (w / count) * 0.9;
+                const half = h / 2;
+                const color = getComputedStyle(document.documentElement).getPropertyValue('--neon-red').trim() || '#ff001c';
+
+                const mode = configData.visualizer_mode || 0;
+                if (mode === 1) {
+                    for (let i = 0; i < count; i++) {
+                        const val = dataArray[i * step] / 255;
+                        const barHeight = val * half;
+                        const x = i * (barWidth + 1);
+                        ctx.fillStyle = color;
+                        ctx.fillRect(x, half - barHeight, barWidth, barHeight);
+                        ctx.fillRect(x, half, barWidth, barHeight);
+                    }
+                } else if (mode === 2) {
+                    for (let i = 0; i < count; i++) {
+                        const val = dataArray[i * step] / 255;
+                        const barHeight = val * h;
+                        const x = i * (barWidth + 1);
+                        ctx.fillStyle = color;
+                        ctx.fillRect(x, h - barHeight, barWidth, barHeight);
+                    }
+                } else if (mode === 3) {
+                    const cx = w / 2;
+                    const cy = h / 2;
+                    const radius = Math.min(w, h) * 0.35;
+                    const angleStep = (Math.PI * 2) / count;
+                    ctx.beginPath();
+                    for (let i = 0; i < count; i++) {
+                        const val = dataArray[i * step] / 255;
+                        const r = radius + val * radius * 0.6;
+                        const angle = i * angleStep;
+                        const x = cx + Math.cos(angle) * r;
+                        const y = cy + Math.sin(angle) * r;
+                        if (i === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    }
+                    ctx.closePath();
+                    ctx.strokeStyle = color;
+                    ctx.lineWidth = 2;
+                    ctx.shadowColor = color;
+                    ctx.shadowBlur = 10;
+                    ctx.stroke();
+                    ctx.shadowBlur = 0;
+                }
+            }
+
+            function animateVisualizer() {
+                drawVisualizer();
+                animFrameId = requestAnimationFrame(animateVisualizer);
+            }
+
+            function ensureVisualizer() {
+                if (webaudioReady && configData.visualizer_mode !== 0) {
+                    if (animFrameId) cancelAnimationFrame(animFrameId);
+                    animateVisualizer();
+                }
+            }
+
+            // ------ Event Listeners ------
+            playBtn.addEventListener('click', togglePlay);
+            prevBtn.addEventListener('click', prevTrack);
+            nextBtn.addEventListener('click', nextTrack);
+            shuffleBtn.addEventListener('click', toggleShuffle);
+            repeatBtn.addEventListener('click', toggleRepeat);
+            progressTrack.addEventListener('click', seek);
+            volSlider.addEventListener('input', (e) => setVolume(e.target.value));
+            volIcon.addEventListener('click', toggleMute);
+            searchInput.addEventListener('input', (e) => { searchQuery = e.target.value; filterSongs(); });
+            audio.addEventListener('timeupdate', updateProgress);
+            audio.addEventListener('ended', () => { if (isRepeat) { audio.currentTime = 0; audio.play().catch(e => {}); } else nextTrack(); });
+            audio.addEventListener('loadedmetadata', () => { totalTimeSpan.textContent = formatTime(audio.duration); });
+            document.body.addEventListener('click', () => {
+                if (!webaudioReady && audio.src) {
+                    const ok = initWebAudio();
+                    if (ok) ensureVisualizer();
+                }
+            }, { once: true });
+
+            // ------ Инициализация ------
+            async function init() {
+                await loadConfigFromServer();
+
+                // Apply config
+                setAccentColor(configData.accent_color || '#ff001c');
+
+                if (configData.site_title) {
+                    document.title = configData.site_title;
+                    document.getElementById('siteTitleInput').value = configData.site_title;
+                }
+
+                // Edit mode
+                const editMode = configData.edit_mode || false;
+                document.getElementById('editModeToggle').checked = editMode;
+                document.querySelectorAll('.widget-wrapper').forEach(el => {
+                    if (editMode) el.classList.add('edit-mode');
+                    else el.classList.remove('edit-mode');
+                });
+
+                // Opacity
+                const opacity = configData.visualizer_opacity || 30;
+                document.getElementById('visualizerOpacity').value = opacity;
+                document.documentElement.style.setProperty('--visualizer-opacity', opacity / 100);
+
+                // Playlist visibility
+                const plVisible = configData.playlist_visible !== false;
+                document.getElementById('playlistToggle').checked = plVisible;
+                const plWidget = document.getElementById('playlist-widget');
+                if (plWidget) {
+                    if (!plVisible) plWidget.classList.add('hidden');
+                    else plWidget.classList.remove('hidden');
+                }
+
+                // Visualizer mode
+                visualizerMode = configData.visualizer_mode || 0;
+                updateVisualizerVisibility();
+
+                // EQ gains
+                if (configData.eq_gains) {
+                    for (let i = 0; i < Math.min(configData.eq_gains.length, eqBands.length); i++) {
+                        eqBands[i].gain = configData.eq_gains[i] || 0;
+                    }
+                }
+
+                // Apply widget states
+                if (configData.widgets) {
+                    for (const id of widgetIds) {
+                        if (configData.widgets[id]) {
+                            widgetState[id] = configData.widgets[id];
+                        }
+                    }
+                }
+                updateAllWidgets();
+
+                // Init widget controls
+                for (const id of widgetIds) {
+                    initWidgetControls(id);
+                }
+
+                // Fetch songs and render
+                fetchSongs();
+                renderEqSliders();
+
+                // Set volume
+                setVolume(volSlider.value);
+
+                // Visualizer
+                setTimeout(() => {
+                    if (webaudioReady && configData.visualizer_mode !== 0) {
+                        ensureVisualizer();
+                    }
+                }, 1000);
+
+            }
+
+            // Переопределяем scheduleSave для работы с сервером
+            const originalScheduleSave = scheduleSave;
+            scheduleSave = function() {
+                if (saveTimeout) clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(saveConfigToServer, 300);
+            };
+
+            init();
+        })();
+    </script>
+</body>
+</html>
