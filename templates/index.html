@@ -6,12 +6,7 @@
     <title>None</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            user-select: none;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
         :root {
             --neon-red: #ff001c;
             --neon-glow: rgba(255, 0, 28, 0.8);
@@ -19,6 +14,8 @@
             --neon-border: rgba(255, 0, 28, 0.4);
             --neon-border-light: rgba(255, 0, 28, 0.3);
             --visualizer-opacity: 0.3;
+            --effects-opacity: 0.5;
+            --effects-color: #ff001c;
             --text-main: #ffffff;
             --text-muted: #c0b0b5;
             --bg-dark: #0b0b0b;
@@ -47,7 +44,7 @@
             left: -10px;
             width: calc(100% + 20px);
             height: calc(100% + 20px);
-            border: 2px solid rgba(255, 255, 255, 0.5);
+            border: 2px solid rgba(255,255,255,0.5);
             border-radius: 16px;
             pointer-events: none;
             z-index: 50;
@@ -59,10 +56,10 @@
             transform: translateX(-50%);
             display: flex;
             gap: 6px;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0,0,0,0.9);
             padding: 4px 8px;
             border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255,255,255,0.2);
             pointer-events: all;
             white-space: nowrap;
             z-index: 100;
@@ -81,12 +78,8 @@
             filter: brightness(0) invert(1) opacity(1);
             transform: scale(1.1);
         }
-        .widget-wrapper.edit-mode .edit-frame {
-            display: block !important;
-        }
-        .widget-wrapper.edit-mode {
-            pointer-events: all !important;
-        }
+        .widget-wrapper.edit-mode .edit-frame { display: block !important; }
+        .widget-wrapper.edit-mode { pointer-events: all !important; }
 
         #settings-top-btn {
             top: 20px;
@@ -94,7 +87,7 @@
             width: 48px;
             height: 48px;
             z-index: 9999;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0,0,0,0.7);
             backdrop-filter: blur(8px);
             border: 1px solid var(--neon-border);
             border-radius: 12px;
@@ -104,13 +97,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
-            transition: box-shadow 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+            box-shadow: 0 0 20px rgba(0,0,0,0.6);
+            transition: box-shadow 0.3s, border-color 0.3s, background 0.3s;
         }
         #settings-top-btn:hover {
             border-color: var(--neon-red);
             box-shadow: 0 0 20px var(--neon-glow);
-            background: rgba(20, 0, 0, 0.8);
+            background: rgba(20,0,0,0.8);
         }
         #settings-top-btn .btn-icon {
             width: 28px;
@@ -139,7 +132,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: none;
             flex-wrap: wrap;
             pointer-events: all;
         }
@@ -147,8 +139,8 @@
             width: 44px;
             height: 44px;
             border-radius: 50%;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(0,0,0,0.6);
             backdrop-filter: blur(8px);
             color: white;
             font-size: 18px;
@@ -158,38 +150,112 @@
             justify-content: center;
             transition: 0.2s;
             flex-shrink: 0;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
         }
         #player-widget .player-btn:hover {
             background: var(--neon-dim);
             border-color: var(--neon-red);
-            box-shadow: 0 0 24px var(--neon-glow), 0 0 20px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 0 24px var(--neon-glow), 0 0 20px rgba(0,0,0,0.8);
             transform: scale(1.08);
         }
-        #player-widget .player-btn:active {
-            transform: scale(0.92);
-        }
+        #player-widget .player-btn:active { transform: scale(0.92); }
         #player-widget .player-btn svg {
             width: 22px;
             height: 22px;
             fill: currentColor;
-            filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.1));
+            filter: drop-shadow(0 0 4px rgba(255,255,255,0.1));
         }
-        #player-widget .player-btn.play-btn svg {
+
+        .custom-play-container {
+            --color: #ffffff;
+            --size: 44px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+            font-size: var(--size);
+            user-select: none;
+            fill: var(--color);
+            width: var(--size);
+            height: var(--size);
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+            transition: 0.2s;
+            flex-shrink: 0;
+        }
+        .custom-play-container:hover {
+            background: var(--neon-dim);
+            border-color: var(--neon-red);
+            box-shadow: 0 0 24px var(--neon-glow), 0 0 20px rgba(0,0,0,0.8);
+            transform: scale(1.08);
+        }
+        .custom-play-container:active { transform: scale(0.92); }
+        .custom-play-container .play {
+            position: absolute;
+            animation: keyframes-fill .5s;
             width: 20px;
             height: 20px;
         }
+        .custom-play-container .pause {
+            position: absolute;
+            display: none;
+            animation: keyframes-fill .5s;
+            width: 20px;
+            height: 20px;
+        }
+        .custom-play-container.playing .play { display: none; }
+        .custom-play-container.playing .pause { display: block; }
+        @keyframes keyframes-fill {
+            0% { transform: rotate(-180deg) scale(0); opacity: 0; }
+            50% { transform: rotate(-10deg) scale(1.2); }
+        }
+
+        .custom-vol-container {
+            --color: #ffffff;
+            --size: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+            font-size: var(--size);
+            user-select: none;
+            fill: var(--color);
+            width: var(--size);
+            height: var(--size);
+            flex-shrink: 0;
+        }
+        .custom-vol-container .mute {
+            position: absolute;
+            animation: keyframes-fill .5s;
+            width: 20px;
+            height: 20px;
+        }
+        .custom-vol-container .voice {
+            position: absolute;
+            display: none;
+            animation: keyframes-fill .5s;
+            width: 20px;
+            height: 20px;
+        }
+        .custom-vol-container.muted .mute { display: none; }
+        .custom-vol-container.muted .voice { display: block; }
+
         #info-widget {
             top: 40px;
             left: 100px;
-            background: rgba(0, 0, 0, 0.65);
+            background: rgba(0,0,0,0.65);
             backdrop-filter: blur(12px);
             border: none;
             border-radius: 16px;
             padding: 12px 24px;
             min-width: 180px;
             color: white;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+            box-shadow: 0 0 30px rgba(0,0,0,0.7);
             display: flex;
             flex-direction: column;
             align-items: flex-start;
@@ -200,7 +266,7 @@
         #info-widget .track-title {
             font-weight: 700;
             letter-spacing: 0.5px;
-            text-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
+            text-shadow: 0 0 8px rgba(0,0,0,0.8);
             white-space: nowrap;
             font-size: 20px;
         }
@@ -212,11 +278,12 @@
             opacity: 0.9;
             font-size: 13px;
         }
+
         #progress-widget {
             bottom: 60px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0,0,0,0.6);
             backdrop-filter: blur(10px);
             border: none;
             border-radius: 40px;
@@ -226,14 +293,13 @@
             gap: 12px;
             z-index: 9997;
             min-width: 260px;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+            box-shadow: 0 0 30px rgba(0,0,0,0.7);
             pointer-events: all;
             height: 44px;
         }
         #progress-widget .time-label {
-            color: rgba(255, 255, 255, 0.9);
+            color: rgba(255,255,255,0.9);
             font-weight: 600;
-            letter-spacing: 0.5px;
             min-width: 50px;
             font-variant-numeric: tabular-nums;
             font-size: 16px;
@@ -242,7 +308,7 @@
         #progress-widget .progress-track {
             flex: 1;
             height: 4px;
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255,255,255,0.15);
             border-radius: 4px;
             cursor: pointer;
             position: relative;
@@ -267,10 +333,11 @@
             border-radius: 2px;
             box-shadow: 0 0 12px var(--neon-red);
         }
+
         #volume-widget {
             bottom: 60px;
             right: 30px;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0,0,0,0.6);
             backdrop-filter: blur(10px);
             border: none;
             border-radius: 40px;
@@ -279,17 +346,9 @@
             align-items: center;
             gap: 12px;
             z-index: 9997;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+            box-shadow: 0 0 30px rgba(0,0,0,0.7);
             pointer-events: all;
             height: 44px;
-        }
-        #volume-widget .vol-icon {
-            color: var(--neon-red);
-            font-size: 16px;
-            width: 20px;
-            text-align: center;
-            cursor: pointer;
-            flex-shrink: 0;
         }
         #volume-widget .vol-slider {
             flex: 1;
@@ -297,7 +356,7 @@
             height: 4px;
             -webkit-appearance: none;
             appearance: none;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255,255,255,0.2);
             border-radius: 4px;
             cursor: pointer;
         }
@@ -321,22 +380,23 @@
             cursor: pointer;
             border: none;
         }
+
         #playlist-widget {
             top: 120px;
             right: 30px;
-            background: rgba(0, 0, 0, 0.75);
+            background: rgba(0,0,0,0.75);
             backdrop-filter: blur(16px);
             border: none;
             border-radius: 20px;
             padding: 14px 16px 16px 16px;
             z-index: 9995;
-            box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 0 40px rgba(0,0,0,0.8);
             pointer-events: all;
             display: flex;
             flex-direction: column;
             gap: 8px;
             overflow: hidden;
-            transition: opacity 0.3s ease, transform 0.3s ease;
+            transition: opacity 0.3s, transform 0.3s;
             width: 280px;
             height: 340px;
         }
@@ -345,14 +405,12 @@
             transform: scale(0.95);
             pointer-events: none !important;
         }
-        #playlist-widget.edit-mode {
-            overflow: visible !important;
-        }
+        #playlist-widget.edit-mode { overflow: visible !important; }
         #playlist-widget .pl-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            color: rgba(255, 255, 255, 0.5);
+            color: rgba(255,255,255,0.5);
             letter-spacing: 1.5px;
             font-weight: 600;
             text-transform: uppercase;
@@ -360,7 +418,7 @@
             font-size: 9px;
         }
         #playlist-widget .pl-search {
-            background: rgba(255, 255, 255, 0.07);
+            background: rgba(255,255,255,0.07);
             border: 1px solid var(--neon-border-light);
             border-radius: 30px;
             padding: 3px 10px;
@@ -376,9 +434,7 @@
             font-size: 11px;
             width: 80px;
         }
-        #playlist-widget .pl-search input::placeholder {
-            color: rgba(255, 255, 255, 0.3);
-        }
+        #playlist-widget .pl-search input::placeholder { color: rgba(255,255,255,0.3); }
         #playlist-widget .pl-search i {
             color: var(--neon-red);
             font-size: 11px;
@@ -391,22 +447,14 @@
             gap: 2px;
             padding-right: 4px;
         }
-        #playlist-widget .pl-list::-webkit-scrollbar {
-            width: 2px;
-        }
-        #playlist-widget .pl-list::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 4px;
-        }
+        #playlist-widget .pl-list::-webkit-scrollbar { width: 2px; }
+        #playlist-widget .pl-list::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 4px; }
         #playlist-widget .pl-list::-webkit-scrollbar-thumb {
             background: var(--neon-red);
             border-radius: 4px;
             box-shadow: 0 0 6px var(--neon-glow);
         }
-        #playlist-widget .pl-list {
-            scrollbar-width: thin;
-            scrollbar-color: var(--neon-red) rgba(255, 255, 255, 0.05);
-        }
+        #playlist-widget .pl-list { scrollbar-width: thin; scrollbar-color: var(--neon-red) rgba(255,255,255,0.05); }
         .pl-item {
             display: grid;
             grid-template-columns: 24px 1fr 28px;
@@ -415,20 +463,18 @@
             border-radius: 6px;
             cursor: pointer;
             transition: 0.1s;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0,0,0,0.3);
             color: #ddd;
             font-size: 12px;
         }
-        .pl-item:hover {
-            background: var(--neon-dim);
-        }
+        .pl-item:hover { background: var(--neon-dim); }
         .pl-item.active-song {
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0,0,0,0.7);
             border: 1px solid var(--neon-red);
             box-shadow: 0 0 6px var(--neon-glow);
         }
         .pl-item .pl-num {
-            color: rgba(255, 255, 255, 0.3);
+            color: rgba(255,255,255,0.3);
             font-size: 10px;
         }
         .pl-item .pl-name {
@@ -438,7 +484,7 @@
             font-weight: 400;
         }
         .pl-item .pl-dl {
-            color: rgba(255, 255, 255, 0.3);
+            color: rgba(255,255,255,0.3);
             cursor: pointer;
             transition: 0.2s;
             text-align: center;
@@ -457,6 +503,7 @@
             background: var(--neon-dim);
             text-shadow: 0 0 6px var(--neon-glow);
         }
+
         #settings-panel {
             position: fixed;
             top: 20px;
@@ -464,7 +511,7 @@
             bottom: 20px;
             width: 400px;
             max-width: calc(100vw - 40px);
-            background: rgba(0, 0, 0, 0.92);
+            background: rgba(0,0,0,0.92);
             backdrop-filter: blur(20px);
             border: 1px solid var(--neon-border);
             border-radius: 24px;
@@ -472,10 +519,10 @@
             transform: scale(0.95) translateY(10px);
             opacity: 0;
             pointer-events: none;
-            transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+            transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
             padding: 30px 24px;
             overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.9);
             display: flex;
             flex-direction: column;
             gap: 20px;
@@ -485,12 +532,8 @@
             opacity: 1;
             pointer-events: all;
         }
-        #settings-panel::-webkit-scrollbar {
-            width: 4px;
-        }
-        #settings-panel::-webkit-scrollbar-track {
-            background: transparent;
-        }
+        #settings-panel::-webkit-scrollbar { width: 4px; }
+        #settings-panel::-webkit-scrollbar-track { background: transparent; }
         #settings-panel::-webkit-scrollbar-thumb {
             background: var(--neon-red);
             border-radius: 4px;
@@ -547,22 +590,22 @@
             align-items: center;
             justify-content: space-between;
             padding: 12px 16px;
-            background: rgba(255, 255, 255, 0.04);
+            background: rgba(255,255,255,0.04);
             border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255,255,255,0.06);
             transition: 0.3s;
         }
         .setting-item:hover {
             border-color: var(--neon-border-light);
-            background: rgba(255, 255, 255, 0.06);
+            background: rgba(255,255,255,0.06);
         }
         .setting-item .label {
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(255,255,255,0.7);
             font-size: 14px;
             font-weight: 500;
         }
         .setting-item .setting-input {
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255,255,255,0.08);
             border: 1px solid var(--neon-border-light);
             border-radius: 8px;
             padding: 6px 12px;
@@ -575,11 +618,9 @@
         .setting-item .setting-input:focus {
             border-color: var(--neon-red);
             box-shadow: 0 0 12px var(--neon-glow);
-            background: rgba(255, 255, 255, 0.12);
+            background: rgba(255,255,255,0.12);
         }
-        .setting-item .setting-input::placeholder {
-            color: rgba(255, 255, 255, 0.3);
-        }
+        .setting-item .setting-input::placeholder { color: rgba(255,255,255,0.3); }
         .toggle-switch {
             position: relative;
             width: 44px;
@@ -598,7 +639,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255,255,255,0.2);
             border-radius: 24px;
             transition: 0.3s;
         }
@@ -613,12 +654,8 @@
             border-radius: 50%;
             transition: 0.3s;
         }
-        .toggle-switch input:checked+.toggle-slider {
-            background: var(--neon-red);
-        }
-        .toggle-switch input:checked+.toggle-slider::before {
-            transform: translateX(20px);
-        }
+        .toggle-switch input:checked+.toggle-slider { background: var(--neon-red); }
+        .toggle-switch input:checked+.toggle-slider::before { transform: translateX(20px); }
         .color-picker-wrapper {
             position: relative;
             width: 32px;
@@ -627,14 +664,12 @@
             cursor: pointer;
             border-radius: 6px;
             overflow: hidden;
-            border: 2px solid rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255,255,255,0.15);
             transition: border 0.2s;
             background: var(--neon-red);
-            box-shadow: 0 0 12px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 0 12px rgba(0,0,0,0.6);
         }
-        .color-picker-wrapper:hover {
-            border-color: rgba(255, 255, 255, 0.5);
-        }
+        .color-picker-wrapper:hover { border-color: rgba(255,255,255,0.5); }
         .color-picker-wrapper input[type="color"] {
             position: absolute;
             top: -6px;
@@ -651,16 +686,16 @@
 
         .opacity-slider-wrap {
             padding: 12px 16px;
-            background: rgba(255, 255, 255, 0.04);
+            background: rgba(255,255,255,0.04);
             border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255,255,255,0.06);
             display: flex;
             align-items: center;
             gap: 16px;
             flex-wrap: wrap;
         }
         .opacity-slider-wrap .label {
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(255,255,255,0.7);
             font-size: 14px;
             font-weight: 500;
             flex-shrink: 0;
@@ -671,7 +706,7 @@
             height: 4px;
             -webkit-appearance: none;
             appearance: none;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255,255,255,0.2);
             border-radius: 4px;
             cursor: pointer;
         }
@@ -696,31 +731,32 @@
             border: none;
         }
 
-        .settings-eq-modes {
+        .settings-eq-modes, .settings-effects-modes {
             padding: 16px;
-            background: rgba(255, 255, 255, 0.04);
+            background: rgba(255,255,255,0.04);
             border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255,255,255,0.06);
             display: flex;
             flex-direction: column;
             gap: 12px;
             flex-shrink: 0;
         }
-        .settings-eq-modes .eq-modes-header {
+        .settings-eq-modes .eq-modes-header,
+        .settings-effects-modes .effects-modes-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255,255,255,0.6);
             letter-spacing: 1.5px;
             font-weight: 600;
             text-transform: uppercase;
             font-size: 11px;
         }
-        .settings-eq-modes .eq-mode-buttons {
+        .eq-mode-buttons, .effects-mode-buttons {
             display: flex;
             gap: 8px;
         }
-        .settings-eq-modes .eq-mode-btn {
+        .eq-mode-btn, .effects-mode-btn {
             background: rgba(255,255,255,0.08);
             border: 1px solid rgba(255,255,255,0.15);
             border-radius: 6px;
@@ -733,21 +769,22 @@
             flex: 1;
             text-align: center;
         }
-        .settings-eq-modes .eq-mode-btn:hover {
+        .eq-mode-btn:hover, .effects-mode-btn:hover {
             background: var(--neon-dim);
             border-color: var(--neon-border);
         }
-        .settings-eq-modes .eq-mode-btn.active {
+        .eq-mode-btn.active, .effects-mode-btn.active {
             background: var(--neon-red);
             color: white;
             border-color: var(--neon-red);
             box-shadow: 0 0 16px var(--neon-glow);
         }
+
         .settings-eq {
             padding: 16px;
-            background: rgba(255, 255, 255, 0.04);
+            background: rgba(255,255,255,0.04);
             border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255,255,255,0.06);
             display: flex;
             flex-direction: column;
             gap: 12px;
@@ -757,7 +794,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255,255,255,0.6);
             letter-spacing: 1.5px;
             font-weight: 600;
             text-transform: uppercase;
@@ -793,7 +830,7 @@
             min-width: 0;
         }
         .settings-eq .eq-band span {
-            color: rgba(255, 255, 255, 0.5);
+            color: rgba(255,255,255,0.5);
             letter-spacing: 0.5px;
             font-size: 9px;
             flex-shrink: 0;
@@ -802,7 +839,7 @@
             -webkit-appearance: slider-vertical;
             appearance: slider-vertical;
             writing-mode: bt-lr;
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255,255,255,0.08);
             border-radius: 20px;
             cursor: pointer;
             outline: none;
@@ -833,14 +870,14 @@
         .about-section {
             margin-top: 0;
             padding: 16px 18px;
-            background: rgba(255, 255, 255, 0.04);
+            background: rgba(255,255,255,0.04);
             border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255,255,255,0.06);
             transition: 0.3s;
         }
         .about-section:hover {
             border-color: var(--neon-border-light);
-            background: rgba(255, 255, 255, 0.06);
+            background: rgba(255,255,255,0.06);
         }
         .about-section .about-title {
             color: var(--neon-red);
@@ -855,13 +892,11 @@
             align-items: center;
             justify-content: space-between;
             padding: 6px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
-        .about-section .about-row:last-child {
-            border-bottom: none;
-        }
+        .about-section .about-row:last-child { border-bottom: none; }
         .about-section .about-label {
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255,255,255,0.6);
             font-size: 13px;
         }
         .about-section .about-value {
@@ -869,13 +904,14 @@
             font-size: 13px;
             font-weight: 500;
         }
+
         #settings-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0,0,0,0.3);
             z-index: 9999;
             opacity: 0;
             pointer-events: none;
@@ -910,17 +946,29 @@
             background: transparent !important;
             transition: opacity 0.3s ease;
         }
-        #visualizer-widget.mode-off canvas {
-            opacity: 0;
+        #visualizer-widget.mode-off canvas { opacity: 0; }
+
+        /* ЭФФЕКТЫ ОГОНЬ И ДОЖДЬ */
+        #effects-fire-canvas,
+        #effects-rain-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9996;
+            opacity: var(--effects-opacity, 0.5);
+            transition: opacity 0.3s;
         }
+        #effects-fire-canvas { z-index: 9996; }
+        #effects-rain-canvas { z-index: 9996; }
+
+        #effects-fire-canvas.hidden { display: none; }
+        #effects-rain-canvas.hidden { display: none; }
 
         @media (max-width: 700px) {
-            #settings-top-btn {
-                width: 40px;
-                height: 40px;
-                top: 12px;
-                right: 12px;
-            }
+            #settings-top-btn { width: 40px; height: 40px; top: 12px; right: 12px; }
             #settings-panel {
                 width: calc(100% - 40px);
                 top: 20px;
@@ -929,21 +977,10 @@
                 border-radius: 20px;
                 padding: 20px 16px;
             }
-            .setting-item .setting-input {
-                width: 100px;
-                font-size: 12px;
-            }
-            .opacity-slider-wrap {
-                flex-wrap: wrap;
-            }
-            .opacity-slider-wrap input[type="range"] {
-                min-width: 60px;
-            }
-            #playlist-widget {
-                width: 200px !important;
-                right: 10px !important;
-                top: 100px !important;
-            }
+            .setting-item .setting-input { width: 100px; font-size: 12px; }
+            .opacity-slider-wrap { flex-wrap: wrap; }
+            .opacity-slider-wrap input[type="range"] { min-width: 60px; }
+            #playlist-widget { width: 200px !important; right: 10px !important; top: 100px !important; }
         }
     </style>
 </head>
@@ -973,9 +1010,12 @@
         <button class="player-btn" id="prevBtn" title="Назад">
             <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
         </button>
-        <button class="player-btn play-btn" id="playBtn" title="Играть">
-            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-        </button>
+
+        <div class="custom-play-container" id="customPlayBtn">
+            <svg viewBox="0 0 384 512" height="1em" xmlns="http://www.w3.org/2000/svg" class="play"><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg>
+            <svg viewBox="0 0 320 512" height="1em" xmlns="http://www.w3.org/2000/svg" class="pause"><path d="M48 64C21.5 64 0 85.5 0 112V400c0 26.5 21.5 48 48 48H80c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48H48zm192 0c-26.5 0-48 21.5-48 48V400c0 26.5 21.5 48 48 48h32c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48H240z"/></svg>
+        </div>
+
         <button class="player-btn" id="nextBtn" title="Далее">
             <svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
         </button>
@@ -1021,7 +1061,10 @@
                 <img src="/media/icons/resize.svg" alt="resize" class="resize-btn" />
             </div>
         </div>
-        <i class="fa-solid fa-volume-high vol-icon" id="widget-vol-icon"></i>
+        <div class="custom-vol-container" id="customVolBtn">
+            <svg viewBox="0 0 576 512" height="1em" xmlns="http://www.w3.org/2000/svg" class="mute"><path d="M301.1 34.8C312.6 40 320 51.4 320 64V448c0 12.6-7.4 24-18.9 29.2s-25 3.1-34.4-5.3L131.8 352H64c-35.3 0-64-28.7-64-64V224c0-35.3 28.7-64 64-64h67.8L266.7 40.1c9.4-8.4 22.9-10.4 34.4-5.3zM425 167l55 55 55-55c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-55 55 55 55c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-55-55-55 55c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l55-55-55-55c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0z"/></svg>
+            <svg viewBox="0 0 448 512" height="1em" xmlns="http://www.w3.org/2000/svg" class="voice"><path d="M301.1 34.8C312.6 40 320 51.4 320 64V448c0 12.6-7.4 24-18.9 29.2s-25 3.1-34.4-5.3L131.8 352H64c-35.3 0-64-28.7-64-64V224c0-35.3 28.7-64 64-64h67.8L266.7 40.1c9.4-8.4 22.9-10.4 34.4-5.3zM412.6 181.5C434.1 199.1 448 225.9 448 256s-13.9 56.9-35.4 74.5c-10.3 8.4-25.4 6.8-33.8-3.5s-6.8-25.4 3.5-33.8C393.1 284.4 400 271 400 256s-6.9-28.4-17.7-37.3c-10.3-8.4-11.8-23.5-3.5-33.8s23.5-11.8 33.8-3.5z"/></svg>
+        </div>
         <input type="range" class="vol-slider" id="widget-vol-slider" min="0" max="100" value="70" step="0.5" />
     </div>
 
@@ -1046,6 +1089,10 @@
     <div id="visualizer-widget" class="mode-off">
         <canvas id="visualizer-canvas"></canvas>
     </div>
+
+    <!-- ЭФФЕКТЫ ОГОНЬ И ДОЖДЬ -->
+    <canvas id="effects-fire-canvas" class="hidden"></canvas>
+    <canvas id="effects-rain-canvas" class="hidden"></canvas>
 
     <div id="settings-overlay"></div>
     <div id="settings-panel">
@@ -1087,6 +1134,29 @@
                 </label>
             </div>
 
+            <div class="settings-effects-modes">
+                <div class="effects-modes-header">
+                    <span>Эффекты</span>
+                </div>
+                <div class="effects-mode-buttons" id="effectsModeButtons">
+                    <button class="effects-mode-btn active" data-mode="0">Выкл</button>
+                    <button class="effects-mode-btn" data-mode="1">Огонь</button>
+                    <button class="effects-mode-btn" data-mode="2">Дождь</button>
+                </div>
+            </div>
+
+            <div class="opacity-slider-wrap">
+                <span class="label">Прозрачность эффектов</span>
+                <input type="range" id="effectsOpacity" min="0" max="100" value="50" />
+            </div>
+
+            <div class="setting-item">
+                <span class="label">Цвет эффектов</span>
+                <div class="color-picker-wrapper" id="effectsColorWrapper">
+                    <input type="color" id="effectsColorPicker" value="#ff001c" />
+                </div>
+            </div>
+
             <div class="settings-eq-modes">
                 <div class="eq-modes-header">
                     <span>Визуализатор</span>
@@ -1110,7 +1180,7 @@
                 <div class="about-title">О плеере</div>
                 <div class="about-row">
                     <span class="about-label">Версия</span>
-                    <span class="about-value">2.0.7</span>
+                    <span class="about-value">2.0.8</span>
                 </div>
                 <div class="about-row">
                     <span class="about-label">Разработчик</span>
@@ -1124,12 +1194,236 @@
 
     <script>
         (function() {
-            // Все настройки хранятся на сервере в config.json
-            const CONFIG_API = '/api/config';
+            // ============================================
+            // СИСТЕМА ЭФФЕКТОВ - ТОЛЬКО ОГОНЬ И ДОЖДЬ
+            // ============================================
 
+            const fireCanvas = document.getElementById('effects-fire-canvas');
+            const fireCtx = fireCanvas.getContext('2d');
+            const rainCanvas = document.getElementById('effects-rain-canvas');
+            const rainCtx = rainCanvas.getContext('2d');
+
+            let effectsMode = 0;
+            let effectsRunning = false;
+            let effectsRAF = null;
+            let lastTime = 0;
+            let fireParticles = [];
+            let rainDrops = [];
+
+            let effectsColor = '#ff001c';
+            let effectsOpacity = 0.5;
+
+            function resizeEffectCanvases() {
+                const w = window.innerWidth;
+                const h = window.innerHeight;
+                fireCanvas.width = w;
+                fireCanvas.height = h;
+                fireCanvas.style.width = '100vw';
+                fireCanvas.style.height = '100vh';
+                rainCanvas.width = w;
+                rainCanvas.height = h;
+                rainCanvas.style.width = '100vw';
+                rainCanvas.style.height = '100vh';
+            }
+            resizeEffectCanvases();
+            window.addEventListener('resize', resizeEffectCanvases);
+
+            // ============ ОГОНЬ (без учёта виджетов) ============
+            function initFire() {
+                fireParticles = [];
+                const w = fireCanvas.width;
+                const h = fireCanvas.height;
+                const count = 120;
+                for (let i = 0; i < count; i++) {
+                    fireParticles.push({
+                        x: Math.random() * w,
+                        y: h + Math.random() * 200,
+                        size: 2 + Math.random() * 8,
+                        vx: (Math.random() - 0.5) * 30,
+                        vy: -(50 + Math.random() * 150),
+                        life: 0.3 + Math.random() * 0.8,
+                        maxLife: 0.3 + Math.random() * 0.8
+                    });
+                }
+            }
+
+            function updateFire(dt) {
+                const w = fireCanvas.width;
+                const h = fireCanvas.height;
+                for (let p of fireParticles) {
+                    p.x += p.vx * dt;
+                    p.y += p.vy * dt;
+                    p.vy += 25 * dt;
+                    p.life -= dt * 0.4;
+
+                    if (p.y < -30 || p.life <= 0) {
+                        p.x = Math.random() * w;
+                        p.y = h + 20 + Math.random() * 100;
+                        p.size = 2 + Math.random() * 8;
+                        p.vx = (Math.random() - 0.5) * 30;
+                        p.vy = -(50 + Math.random() * 150);
+                        p.life = 0.3 + Math.random() * 0.8;
+                        p.maxLife = p.life;
+                    }
+                }
+            }
+
+            function drawFire() {
+                const w = fireCanvas.width;
+                const h = fireCanvas.height;
+                fireCtx.clearRect(0, 0, w, h);
+                const color = effectsColor;
+                for (let p of fireParticles) {
+                    const alpha = (p.life / p.maxLife) * 0.7;
+                    const size = p.size * (0.3 + 0.7 * (p.life / p.maxLife));
+                    fireCtx.beginPath();
+                    fireCtx.arc(p.x, p.y, size, 0, Math.PI * 2);
+                    fireCtx.fillStyle = color;
+                    fireCtx.globalAlpha = alpha;
+                    fireCtx.shadowColor = color;
+                    fireCtx.shadowBlur = 20;
+                    fireCtx.fill();
+                    fireCtx.shadowBlur = 0;
+                }
+                fireCtx.globalAlpha = 1;
+            }
+
+            // ============ ДОЖДЬ (без учёта виджетов) ============
+            function initRain() {
+                rainDrops = [];
+                const w = rainCanvas.width;
+                const h = rainCanvas.height;
+                const count = 200;
+                for (let i = 0; i < count; i++) {
+                    rainDrops.push({
+                        x: Math.random() * w,
+                        y: -10 - Math.random() * 200,
+                        speed: 100 + Math.random() * 300,
+                        length: 10 + Math.random() * 30,
+                        width: 0.5 + Math.random() * 2,
+                        opacity: 0.2 + Math.random() * 0.5
+                    });
+                }
+            }
+
+            function updateRain(dt) {
+                const w = rainCanvas.width;
+                const h = rainCanvas.height;
+                for (let d of rainDrops) {
+                    d.x += d.speed * 0.05 * dt;
+                    d.y += d.speed * dt;
+
+                    if (d.y > h + 30) {
+                        d.x = Math.random() * w;
+                        d.y = -10 - Math.random() * 100;
+                        d.speed = 100 + Math.random() * 300;
+                        d.length = 10 + Math.random() * 30;
+                        d.opacity = 0.2 + Math.random() * 0.5;
+                    }
+                    if (d.x < -50 || d.x > w + 50) {
+                        d.x = Math.random() * w;
+                        d.y = -10 - Math.random() * 100;
+                    }
+                }
+            }
+
+            function drawRain() {
+                const w = rainCanvas.width;
+                const h = rainCanvas.height;
+                rainCtx.clearRect(0, 0, w, h);
+                const color = effectsColor;
+                for (let d of rainDrops) {
+                    rainCtx.beginPath();
+                    rainCtx.moveTo(d.x, d.y);
+                    rainCtx.lineTo(d.x + d.length * 0.15, d.y + d.length);
+                    rainCtx.strokeStyle = color;
+                    rainCtx.globalAlpha = d.opacity * 0.6;
+                    rainCtx.lineWidth = d.width;
+                    rainCtx.shadowColor = color;
+                    rainCtx.shadowBlur = 4;
+                    rainCtx.stroke();
+                    rainCtx.shadowBlur = 0;
+                }
+                rainCtx.globalAlpha = 1;
+            }
+
+            // ============ УПРАВЛЕНИЕ ЭФФЕКТАМИ ============
+            function startEffects(mode) {
+                effectsMode = mode;
+
+                fireCanvas.classList.add('hidden');
+                rainCanvas.classList.add('hidden');
+
+                if (effectsRAF) {
+                    cancelAnimationFrame(effectsRAF);
+                    effectsRAF = null;
+                }
+                effectsRunning = false;
+
+                if (mode === 0) return;
+
+                if (mode === 1) {
+                    fireCanvas.classList.remove('hidden');
+                    initFire();
+                } else if (mode === 2) {
+                    rainCanvas.classList.remove('hidden');
+                    initRain();
+                }
+
+                effectsRunning = true;
+                lastTime = performance.now();
+                animateEffects();
+            }
+
+            function animateEffects() {
+                if (!effectsRunning) {
+                    effectsRAF = null;
+                    return;
+                }
+
+                const now = performance.now();
+                const dt = Math.min(0.05, (now - lastTime) / 1000);
+                lastTime = now;
+
+                if (effectsMode === 1) {
+                    updateFire(dt);
+                    drawFire();
+                } else if (effectsMode === 2) {
+                    updateRain(dt);
+                    drawRain();
+                }
+
+                effectsRAF = requestAnimationFrame(animateEffects);
+            }
+
+            function updateEffectsSettings() {
+                const opacity = (configData.effects_opacity || 50) / 100;
+                effectsOpacity = opacity;
+                document.documentElement.style.setProperty('--effects-opacity', opacity);
+                fireCanvas.style.opacity = opacity;
+                rainCanvas.style.opacity = opacity;
+
+                const color = configData.effects_color || '#ff001c';
+                effectsColor = color;
+                document.documentElement.style.setProperty('--effects-color', color);
+                effectsColorPicker.value = color;
+                effectsColorWrapper.style.background = color;
+                document.getElementById('effectsOpacity').value = configData.effects_opacity || 50;
+
+                effectsModeButtons.forEach(btn => {
+                    btn.classList.toggle('active', parseInt(btn.dataset.mode) === configData.effects_mode);
+                });
+
+                startEffects(configData.effects_mode || 0);
+            }
+
+            // ============================================
+            // ОСТАЛЬНОЙ КОД
+            // ============================================
+
+            const CONFIG_API = '/api/config';
             const widgetIds = ['settings', 'player', 'info', 'progress', 'volume', 'playlist'];
 
-            // Состояние виджетов
             let widgetState = {
                 settings: { x: 20, y: 20, width: 48, height: 48, rotation: 0, scale: 1, fontScale: 1 },
                 player: { x: 100, y: 100, width: 280, height: 70, rotation: 0, scale: 1, fontScale: 1 },
@@ -1146,20 +1440,21 @@
                 visualizer_opacity: 30,
                 playlist_visible: true,
                 visualizer_mode: 0,
-                eq_gains: [0, 0, 0, 0, 0, 0, 0],
+                eq_gains: [0,0,0,0,0,0,0],
+                effects_mode: 0,
+                effects_opacity: 50,
+                effects_color: '#ff001c',
                 widgets: widgetState
             };
 
             let configLoaded = false;
             let saveTimeout = null;
 
-            // DOM элементы
             const widgets = {};
             for (const id of widgetIds) {
                 widgets[id] = document.getElementById(id + '-widget') || document.getElementById('settings-top-btn');
             }
 
-            // Загрузка конфига с сервера
             async function loadConfigFromServer() {
                 try {
                     const res = await fetch(CONFIG_API);
@@ -1168,9 +1463,7 @@
                     configData = data;
                     if (data.widgets) {
                         for (const id of widgetIds) {
-                            if (data.widgets[id]) {
-                                widgetState[id] = data.widgets[id];
-                            }
+                            if (data.widgets[id]) widgetState[id] = data.widgets[id];
                         }
                     }
                     configLoaded = true;
@@ -1181,14 +1474,9 @@
                 }
             }
 
-            // Сохранение конфига на сервер
             async function saveConfigToServer() {
                 if (!configLoaded) return;
-                if (saveTimeout) {
-                    clearTimeout(saveTimeout);
-                    saveTimeout = null;
-                }
-                // Обновляем widgets в configData
+                if (saveTimeout) { clearTimeout(saveTimeout); saveTimeout = null; }
                 configData.widgets = {};
                 for (const id of widgetIds) {
                     configData.widgets[id] = { ...widgetState[id] };
@@ -1200,9 +1488,7 @@
                         body: JSON.stringify(configData)
                     });
                     if (!res.ok) throw new Error('Network error');
-                } catch (e) {
-                    console.warn('Failed to save config to server');
-                }
+                } catch (e) { console.warn('Failed to save config to server'); }
             }
 
             function scheduleSave() {
@@ -1219,7 +1505,6 @@
                 el.style.right = 'auto';
                 el.style.bottom = 'auto';
                 el.style.transform = `rotate(${w.rotation}deg)`;
-
                 if (id === 'settings') {
                     el.style.width = w.width + 'px';
                     el.style.height = w.height + 'px';
@@ -1256,13 +1541,23 @@
                     btn.style.height = s + 'px';
                     const svg = btn.querySelector('svg');
                     if (svg) {
-                        const isPlay = btn.classList.contains('play-btn');
-                        const bs = isPlay ? 20 : 22;
-                        const ns = bs * scale;
+                        const ns = 22 * scale;
                         svg.style.width = ns + 'px';
                         svg.style.height = ns + 'px';
                     }
                 });
+                const customPlay = el.querySelector('.custom-play-container');
+                if (customPlay) {
+                    const s = base * scale;
+                    customPlay.style.width = s + 'px';
+                    customPlay.style.height = s + 'px';
+                    customPlay.style.fontSize = s + 'px';
+                    const svgs = customPlay.querySelectorAll('svg');
+                    svgs.forEach(svg => {
+                        svg.style.width = (20 * scale) + 'px';
+                        svg.style.height = (20 * scale) + 'px';
+                    });
+                }
                 el.style.gap = (6 * scale) + 'px';
             }
 
@@ -1312,17 +1607,13 @@
             }
 
             function updateAllWidgets() {
-                for (const id of widgetIds) {
-                    applyWidgetState(id);
-                }
+                for (const id of widgetIds) applyWidgetState(id);
             }
 
-            // ------ Drag, Rotate, Resize ------
             function makeDraggable(widgetId, moveBtn) {
                 let dragging = false, offX = 0, offY = 0;
                 moveBtn.addEventListener('mousedown', function(e) {
-                    e.stopPropagation();
-                    e.preventDefault();
+                    e.stopPropagation(); e.preventDefault();
                     if (!document.getElementById('editModeToggle').checked) return;
                     const w = widgetState[widgetId];
                     const el = widgets[widgetId];
@@ -1341,10 +1632,8 @@
                     let ny = e.clientY - offY;
                     nx = Math.max(0, Math.min(nx, window.innerWidth - el.offsetWidth));
                     ny = Math.max(0, Math.min(ny, window.innerHeight - el.offsetHeight));
-                    w.x = nx;
-                    w.y = ny;
-                    el.style.left = nx + 'px';
-                    el.style.top = ny + 'px';
+                    w.x = nx; w.y = ny;
+                    el.style.left = nx + 'px'; el.style.top = ny + 'px';
                 }
                 function onUp() {
                     if (dragging) { dragging = false; scheduleSave(); }
@@ -1356,18 +1645,16 @@
             function makeRotatable(widgetId, rotateBtn) {
                 let rotating = false, startAngle = 0, startRotation = 0, total = 0, prev = 0;
                 rotateBtn.addEventListener('mousedown', function(e) {
-                    e.stopPropagation();
-                    e.preventDefault();
+                    e.stopPropagation(); e.preventDefault();
                     if (!document.getElementById('editModeToggle').checked) return;
                     const w = widgetState[widgetId];
                     const el = widgets[widgetId];
                     const rect = el.getBoundingClientRect();
-                    const cx = rect.left + rect.width / 2;
-                    const cy = rect.top + rect.height / 2;
+                    const cx = rect.left + rect.width/2;
+                    const cy = rect.top + rect.height/2;
                     startAngle = Math.atan2(e.clientY - cy, e.clientX - cx);
                     startRotation = w.rotation;
-                    total = 0;
-                    prev = startAngle;
+                    total = 0; prev = startAngle;
                     rotating = true;
                     document.addEventListener('mousemove', onRotate);
                     document.addEventListener('mouseup', onRotateUp);
@@ -1377,23 +1664,22 @@
                     const w = widgetState[widgetId];
                     const el = widgets[widgetId];
                     const rect = el.getBoundingClientRect();
-                    const cx = rect.left + rect.width / 2;
-                    const cy = rect.top + rect.height / 2;
+                    const cx = rect.left + rect.width/2;
+                    const cy = rect.top + rect.height/2;
                     const cur = Math.atan2(e.clientY - cy, e.clientX - cx);
                     let delta = cur - prev;
-                    if (delta > Math.PI) delta -= 2 * Math.PI;
-                    if (delta < -Math.PI) delta += 2 * Math.PI;
-                    total += delta;
-                    prev = cur;
-                    w.rotation = startRotation + total * (180 / Math.PI);
+                    if (delta > Math.PI) delta -= 2*Math.PI;
+                    if (delta < -Math.PI) delta += 2*Math.PI;
+                    total += delta; prev = cur;
+                    w.rotation = startRotation + total*(180/Math.PI);
                     el.style.transform = `rotate(${w.rotation}deg)`;
                 }
                 function onRotateUp() {
                     if (rotating) {
                         rotating = false;
                         const w = widgetState[widgetId];
-                        let r = Math.round(w.rotation / 30) * 30;
-                        r = ((r % 360) + 360) % 360;
+                        let r = Math.round(w.rotation/30)*30;
+                        r = ((r%360)+360)%360;
                         w.rotation = r;
                         widgets[widgetId].style.transform = `rotate(${r}deg)`;
                         scheduleSave();
@@ -1404,16 +1690,13 @@
             }
 
             function makeResizable(widgetId, resizeBtn) {
-                let resizing = false, startX = 0, startY = 0, startW = 0, startH = 0, startScale = 1, startFontScale = 1;
+                let resizing = false, startX=0, startY=0, startW=0, startH=0, startScale=1, startFontScale=1;
                 resizeBtn.addEventListener('mousedown', function(e) {
-                    e.stopPropagation();
-                    e.preventDefault();
+                    e.stopPropagation(); e.preventDefault();
                     if (!document.getElementById('editModeToggle').checked) return;
                     const w = widgetState[widgetId];
-                    startX = e.clientX;
-                    startY = e.clientY;
-                    startW = w.width;
-                    startH = w.height;
+                    startX = e.clientX; startY = e.clientY;
+                    startW = w.width; startH = w.height;
                     startScale = w.scale || 1;
                     startFontScale = w.fontScale || 1;
                     resizing = true;
@@ -1426,16 +1709,12 @@
                     const el = widgets[widgetId];
                     const dx = e.clientX - startX;
                     const dy = e.clientY - startY;
-
                     if (widgetId === 'settings') {
-                        let nw = startW + dx;
-                        let nh = startH + dy;
+                        let nw = startW + dx, nh = startH + dy;
                         nw = Math.max(40, Math.min(nw, window.innerWidth - 20));
                         nh = Math.max(40, Math.min(nh, window.innerHeight - 20));
-                        w.width = nw;
-                        w.height = nh;
-                        el.style.width = nw + 'px';
-                        el.style.height = nh + 'px';
+                        w.width = nw; w.height = nh;
+                        el.style.width = nw + 'px'; el.style.height = nh + 'px';
                         const icon = el.querySelector('.btn-icon');
                         if (icon) {
                             let s = Math.min(nw, nh) * 0.58;
@@ -1444,50 +1723,39 @@
                             icon.style.height = s + 'px';
                         }
                     } else if (widgetId === 'player') {
-                        let ns = startScale + dx / 200;
+                        let ns = startScale + dx/200;
                         ns = Math.max(0.3, Math.min(3, ns));
                         w.scale = ns;
                         scalePlayer(el, ns);
                         const rect = el.getBoundingClientRect();
-                        w.width = rect.width;
-                        w.height = rect.height;
+                        w.width = rect.width; w.height = rect.height;
                     } else if (widgetId === 'info') {
-                        let nw = startW + dx;
-                        let nh = startH + dy;
+                        let nw = startW + dx, nh = startH + dy;
                         nw = Math.max(100, Math.min(nw, window.innerWidth - 20));
                         nh = Math.max(40, Math.min(nh, window.innerHeight - 20));
-                        const scaleRatio = Math.min(nw / startW, nh / startH);
+                        const scaleRatio = Math.min(nw/startW, nh/startH);
                         let nfs = startFontScale * scaleRatio;
                         nfs = Math.max(0.4, Math.min(2.5, nfs));
-                        w.fontScale = nfs;
-                        w.width = nw;
-                        w.height = nh;
-                        el.style.width = nw + 'px';
-                        el.style.height = nh + 'px';
+                        w.fontScale = nfs; w.width = nw; w.height = nh;
+                        el.style.width = nw + 'px'; el.style.height = nh + 'px';
                         applyInfoScale(el, nfs);
                     } else if (widgetId === 'progress') {
                         let nw = startW + dx;
                         nw = Math.max(200, Math.min(nw, window.innerWidth - 20));
-                        w.width = nw;
-                        el.style.width = nw + 'px';
+                        w.width = nw; el.style.width = nw + 'px';
                     } else if (widgetId === 'volume') {
                         let nw = startW + dx;
                         nw = Math.max(120, Math.min(nw, window.innerWidth - 20));
-                        w.width = nw;
-                        el.style.width = nw + 'px';
+                        w.width = nw; el.style.width = nw + 'px';
                     } else if (widgetId === 'playlist') {
-                        let nw = startW + dx;
-                        let nh = startH + dy;
+                        let nw = startW + dx, nh = startH + dy;
                         nw = Math.max(160, Math.min(nw, window.innerWidth - 20));
                         nh = Math.max(150, Math.min(nh, window.innerHeight - 20));
-                        const scaleRatio = Math.min(nw / startW, nh / startH);
+                        const scaleRatio = Math.min(nw/startW, nh/startH);
                         let nfs = startFontScale * scaleRatio;
                         nfs = Math.max(0.4, Math.min(2.5, nfs));
-                        w.fontScale = nfs;
-                        w.width = nw;
-                        w.height = nh;
-                        el.style.width = nw + 'px';
-                        el.style.height = nh + 'px';
+                        w.fontScale = nfs; w.width = nw; w.height = nh;
+                        el.style.width = nw + 'px'; el.style.height = nh + 'px';
                         applyPlaylistScale(el, nfs);
                     }
                 }
@@ -1509,11 +1777,9 @@
                 if (resize) makeResizable(widgetId, resize);
             }
 
-            // ------ Настройки UI ------
             const settingsPanel = document.getElementById('settings-panel');
             const settingsOverlay = document.getElementById('settings-overlay');
             const settingsClose = document.getElementById('settings-close-btn');
-
             function openSettings() {
                 settingsPanel.classList.add('open');
                 settingsOverlay.classList.add('active');
@@ -1534,20 +1800,15 @@
                 if (e.key === 'Escape' && settingsPanel.classList.contains('open')) closeSettings();
             });
 
-            // Edit Mode
             document.getElementById('editModeToggle').addEventListener('change', function(e) {
                 configData.edit_mode = e.target.checked;
                 document.querySelectorAll('.widget-wrapper').forEach(el => {
-                    if (e.target.checked) {
-                        el.classList.add('edit-mode');
-                    } else {
-                        el.classList.remove('edit-mode');
-                    }
+                    if (e.target.checked) el.classList.add('edit-mode');
+                    else el.classList.remove('edit-mode');
                 });
                 scheduleSave();
             });
 
-            // Accent color
             const colorPicker = document.getElementById('accentColorPicker');
             const pickerWrapper = document.getElementById('colorPickerWrapper');
             function setAccentColor(hex) {
@@ -1564,27 +1825,20 @@
             colorPicker.addEventListener('input', (e) => setAccentColor(e.target.value));
             pickerWrapper.addEventListener('click', (e) => { if (e.target !== colorPicker) colorPicker.click(); });
 
-            // Site title
             document.getElementById('siteTitleInput').addEventListener('input', function(e) {
                 const title = e.target.value.trim();
-                if (title) {
-                    document.title = title;
-                } else {
-                    document.title = 'None';
-                }
+                document.title = title || 'None';
                 configData.site_title = title;
                 scheduleSave();
             });
 
-            // Visualizer opacity
             document.getElementById('visualizerOpacity').addEventListener('input', function(e) {
                 const val = parseInt(e.target.value);
                 configData.visualizer_opacity = val;
-                document.documentElement.style.setProperty('--visualizer-opacity', val / 100);
+                document.documentElement.style.setProperty('--visualizer-opacity', val/100);
                 scheduleSave();
             });
 
-            // Playlist toggle
             document.getElementById('playlistToggle').addEventListener('change', function(e) {
                 configData.playlist_visible = e.target.checked;
                 const widget = document.getElementById('playlist-widget');
@@ -1595,7 +1849,40 @@
                 scheduleSave();
             });
 
-            // Visualizer mode buttons
+            const effectsModeButtons = document.querySelectorAll('.effects-mode-btn');
+            effectsModeButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    effectsModeButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    configData.effects_mode = parseInt(this.dataset.mode);
+                    scheduleSave();
+                    updateEffectsSettings();
+                });
+            });
+
+            document.getElementById('effectsOpacity').addEventListener('input', function(e) {
+                const val = parseInt(e.target.value);
+                configData.effects_opacity = val;
+                document.documentElement.style.setProperty('--effects-opacity', val/100);
+                fireCanvas.style.opacity = val/100;
+                rainCanvas.style.opacity = val/100;
+                scheduleSave();
+            });
+
+            const effectsColorPicker = document.getElementById('effectsColorPicker');
+            const effectsColorWrapper = document.getElementById('effectsColorWrapper');
+            effectsColorPicker.addEventListener('input', function(e) {
+                const hex = e.target.value;
+                configData.effects_color = hex;
+                effectsColorWrapper.style.background = hex;
+                document.documentElement.style.setProperty('--effects-color', hex);
+                effectsColor = hex;
+                scheduleSave();
+            });
+            effectsColorWrapper.addEventListener('click', (e) => {
+                if (e.target !== effectsColorPicker) effectsColorPicker.click();
+            });
+
             const modeButtons = document.querySelectorAll('.eq-mode-btn');
             modeButtons.forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -1610,7 +1897,7 @@
                 });
             });
 
-            // ------ Audio Player Logic ------
+            // --- Audio and Visualizer ---
             let songs = [], filteredSongs = [], currentIndex = 0, isPlaying = false, isShuffle = false, isRepeat = false;
             let audioCtx = null, analyser = null, srcNode = null, dataArray = null, webaudioReady = false;
             let eqFilters = [];
@@ -1627,7 +1914,9 @@
             const ctx = visualizerCanvas.getContext('2d');
 
             const audio = document.getElementById('audio-player');
-            const playBtn = document.getElementById('playBtn');
+            const customPlayBtn = document.getElementById('customPlayBtn');
+            const customVolBtn = document.getElementById('customVolBtn');
+
             const prevBtn = document.getElementById('prevBtn');
             const nextBtn = document.getElementById('nextBtn');
             const shuffleBtn = document.getElementById('shuffleBtn');
@@ -1639,7 +1928,6 @@
             const progressFill = document.getElementById('widget-progress-fill');
             const progressTrack = document.getElementById('widget-progress-track');
             const volSlider = document.getElementById('widget-vol-slider');
-            const volIcon = document.getElementById('widget-vol-icon');
             const plList = document.getElementById('widget-pl-list');
             const searchInput = document.getElementById('widget-search');
 
@@ -1656,18 +1944,12 @@
                 visualizerMode = configData.visualizer_mode || 0;
                 if (visualizerMode === 0) {
                     visualizerEl.classList.add('mode-off');
-                    if (animFrameId) {
-                        cancelAnimationFrame(animFrameId);
-                        animFrameId = null;
-                    }
+                    if (animFrameId) { cancelAnimationFrame(animFrameId); animFrameId = null; }
                     ctx.clearRect(0, 0, visualizerCanvas.width, visualizerCanvas.height);
                 } else {
                     visualizerEl.classList.remove('mode-off');
-                    if (!animFrameId && webaudioReady) {
-                        animateVisualizer();
-                    }
+                    if (!animFrameId && webaudioReady) animateVisualizer();
                 }
-                // Update button states
                 modeButtons.forEach(btn => {
                     btn.classList.toggle('active', parseInt(btn.dataset.mode) === visualizerMode);
                 });
@@ -1754,9 +2036,7 @@
                     srcNode = audioCtx.createMediaElementSource(audio);
                     initEqualizer();
                     webaudioReady = true;
-                    if (configData.visualizer_mode !== 0) {
-                        updateVisualizerVisibility();
-                    }
+                    if (configData.visualizer_mode !== 0) updateVisualizerVisibility();
                     return true;
                 } catch (e) { return false; }
             }
@@ -1791,12 +2071,9 @@
                 progressFill.style.width = '0%';
                 currentTimeSpan.textContent = '0:00';
                 totalTimeSpan.textContent = audio.duration ? formatTime(audio.duration) : '0:00';
-
                 setTimeout(() => {
                     const activeItem = plList.querySelector('.pl-item.active-song');
-                    if (activeItem) {
-                        activeItem.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-                    }
+                    if (activeItem) activeItem.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
                 }, 100);
             }
 
@@ -1805,12 +2082,12 @@
                 if (isPlaying) {
                     audio.pause();
                     isPlaying = false;
-                    playBtn.querySelector('svg').innerHTML = '<path d="M8 5v14l11-7z"/>';
+                    customPlayBtn.classList.remove('playing');
                 } else {
                     if (!webaudioReady && audio.src) initWebAudio();
                     audio.play().catch(e => {});
                     isPlaying = true;
-                    playBtn.querySelector('svg').innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+                    customPlayBtn.classList.add('playing');
                 }
             }
 
@@ -1866,20 +2143,21 @@
             function setVolume(val) {
                 const percent = parseFloat(val) / 100;
                 audio.volume = Math.min(1, Math.max(0, Math.pow(percent, 1.8)));
-                if (audio.volume === 0) volIcon.className = 'fa-solid fa-volume-off vol-icon';
-                else if (audio.volume < 0.1) volIcon.className = 'fa-solid fa-volume-low vol-icon';
-                else volIcon.className = 'fa-solid fa-volume-high vol-icon';
+                if (audio.volume === 0) customVolBtn.classList.add('muted');
+                else customVolBtn.classList.remove('muted');
             }
 
             function toggleMute() {
                 if (audio.volume > 0) {
                     audio.dataset.prevVol = audio.volume;
                     audio.volume = 0; volSlider.value = 0; setVolume(0);
+                    customVolBtn.classList.add('muted');
                 } else {
                     let prev = parseFloat(audio.dataset.prevVol) || 0.7;
                     audio.volume = prev;
                     volSlider.value = Math.min(100, Math.max(0, Math.round(Math.pow(prev, 1/1.8) * 100)));
                     setVolume(volSlider.value);
+                    customVolBtn.classList.remove('muted');
                 }
             }
 
@@ -2012,18 +2290,32 @@
                 }
             }
 
-            // ------ Event Listeners ------
-            playBtn.addEventListener('click', togglePlay);
+            // --- Event listeners ---
+            customPlayBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                togglePlay();
+            });
+            customVolBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleMute();
+            });
             prevBtn.addEventListener('click', prevTrack);
             nextBtn.addEventListener('click', nextTrack);
             shuffleBtn.addEventListener('click', toggleShuffle);
             repeatBtn.addEventListener('click', toggleRepeat);
             progressTrack.addEventListener('click', seek);
             volSlider.addEventListener('input', (e) => setVolume(e.target.value));
-            volIcon.addEventListener('click', toggleMute);
+            volSlider.addEventListener('change', (e) => {
+                if (audio.volume === 0) customVolBtn.classList.add('muted');
+                else customVolBtn.classList.remove('muted');
+            });
             searchInput.addEventListener('input', (e) => { searchQuery = e.target.value; filterSongs(); });
             audio.addEventListener('timeupdate', updateProgress);
-            audio.addEventListener('ended', () => { if (isRepeat) { audio.currentTime = 0; audio.play().catch(e => {}); } else nextTrack(); });
+            audio.addEventListener('ended', () => {
+                customPlayBtn.classList.remove('playing');
+                if (isRepeat) { audio.currentTime = 0; audio.play().catch(e => {}); customPlayBtn.classList.add('playing'); }
+                else nextTrack();
+            });
             audio.addEventListener('loadedmetadata', () => { totalTimeSpan.textContent = formatTime(audio.duration); });
             document.body.addEventListener('click', () => {
                 if (!webaudioReady && audio.src) {
@@ -2032,11 +2324,10 @@
                 }
             }, { once: true });
 
-            // ------ Инициализация ------
+            // --- Init ---
             async function init() {
                 await loadConfigFromServer();
 
-                // Apply config
                 setAccentColor(configData.accent_color || '#ff001c');
 
                 if (configData.site_title) {
@@ -2044,7 +2335,6 @@
                     document.getElementById('siteTitleInput').value = configData.site_title;
                 }
 
-                // Edit mode
                 const editMode = configData.edit_mode || false;
                 document.getElementById('editModeToggle').checked = editMode;
                 document.querySelectorAll('.widget-wrapper').forEach(el => {
@@ -2052,12 +2342,10 @@
                     else el.classList.remove('edit-mode');
                 });
 
-                // Opacity
                 const opacity = configData.visualizer_opacity || 30;
                 document.getElementById('visualizerOpacity').value = opacity;
-                document.documentElement.style.setProperty('--visualizer-opacity', opacity / 100);
+                document.documentElement.style.setProperty('--visualizer-opacity', opacity/100);
 
-                // Playlist visibility
                 const plVisible = configData.playlist_visible !== false;
                 document.getElementById('playlistToggle').checked = plVisible;
                 const plWidget = document.getElementById('playlist-widget');
@@ -2066,50 +2354,42 @@
                     else plWidget.classList.remove('hidden');
                 }
 
-                // Visualizer mode
                 visualizerMode = configData.visualizer_mode || 0;
                 updateVisualizerVisibility();
 
-                // EQ gains
                 if (configData.eq_gains) {
                     for (let i = 0; i < Math.min(configData.eq_gains.length, eqBands.length); i++) {
                         eqBands[i].gain = configData.eq_gains[i] || 0;
                     }
                 }
 
-                // Apply widget states
                 if (configData.widgets) {
                     for (const id of widgetIds) {
-                        if (configData.widgets[id]) {
-                            widgetState[id] = configData.widgets[id];
-                        }
+                        if (configData.widgets[id]) widgetState[id] = configData.widgets[id];
                     }
                 }
                 updateAllWidgets();
 
-                // Init widget controls
-                for (const id of widgetIds) {
-                    initWidgetControls(id);
-                }
+                for (const id of widgetIds) initWidgetControls(id);
 
-                // Fetch songs and render
                 fetchSongs();
                 renderEqSliders();
 
-                // Set volume
                 setVolume(volSlider.value);
+                if (audio.volume === 0) customVolBtn.classList.add('muted');
+                else customVolBtn.classList.remove('muted');
 
-                // Visualizer
+                updateEffectsSettings();
+
+                const effOpacity = (configData.effects_opacity || 50) / 100;
+                fireCanvas.style.opacity = effOpacity;
+                rainCanvas.style.opacity = effOpacity;
+
                 setTimeout(() => {
-                    if (webaudioReady && configData.visualizer_mode !== 0) {
-                        ensureVisualizer();
-                    }
+                    if (webaudioReady && configData.visualizer_mode !== 0) ensureVisualizer();
                 }, 1000);
-
             }
 
-            // Переопределяем scheduleSave для работы с сервером
-            const originalScheduleSave = scheduleSave;
             scheduleSave = function() {
                 if (saveTimeout) clearTimeout(saveTimeout);
                 saveTimeout = setTimeout(saveConfigToServer, 300);
