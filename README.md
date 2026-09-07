@@ -23,7 +23,7 @@
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/flask-music-player.git
+git clone https://github.com/Vad5m/flask-music-player.git
 cd flask-music-player
 ```
 
