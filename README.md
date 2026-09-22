@@ -1,5 +1,6 @@
 
 <img width="1919" height="1040" alt="изображение" src="https://github.com/user-attachments/assets/c78ee7b2-c1fa-475b-801c-2dc313aa2e3f" />
+<img width="1920" height="1080" alt="изображение" src="https://github.com/user-attachments/assets/5823a8db-6580-49aa-8be8-691f3f882cc8" />
 
 
 # music-player-website
