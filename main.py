@@ -133,10 +133,5 @@ def create_app():
 
 if __name__ == "__main__":
     app = create_app()
-    print("=" * 50)
-    print("Launch as standalone on port 50003")
     print(f"Available at: http://127.0.0.1:50003/music/")
-    print("=" * 50)
-    print(python)
-    print("=" * 50)
     app.run(host='0.0.0.0', port=50003, debug=True)
