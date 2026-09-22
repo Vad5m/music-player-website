@@ -74,9 +74,9 @@ flask-music-player/
 ├── config.json          # Configuration file (auto-generated)
 ├── music/               # MP3 files directory
 ├── media/               # Media files directory
-├── static/js               # js directory
-├── static/css               # css directory
-├── static/icons               # Main static 
+├── static/js            # js directory
+├── static/css           # css directory
+├── static/icons         # Main static 
 ├── templates/
 │   └── index.html       # Main HTML template
 └── README.md
