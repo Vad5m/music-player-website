@@ -234,6 +234,7 @@
         accent_color: '#ff001c',
         edit_mode: false,
         site_title: '',
+        language: 'ru',
         visualizer_opacity: 30,
         playlist_visible: true,
         visualizer_mode: 0,
@@ -616,6 +617,28 @@
         });
         scheduleSave();
     });
+
+    // === Language switch ===
+    function initLanguageSwitch() {
+        const savedLang = configData.language || 'ru';
+        window.currentLocale = savedLang;
+
+        const langBtns = document.querySelectorAll('.lang-btn');
+        langBtns.forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.lang === savedLang);
+            btn.addEventListener('click', () => {
+                const lang = btn.dataset.lang;
+                window.currentLocale = lang;
+                configData.language = lang;
+                langBtns.forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+                window.applyLocale();
+                // Обновляем динамические тексты
+                renderPlaylist();
+                updateTrackDisplay();
+                scheduleSave();
+            });
+        });
+    }
 
     const colorPicker = document.getElementById('accentColorPicker');
     const pickerWrapper = document.getElementById('colorPickerWrapper');
@@ -1231,7 +1254,7 @@
         if (!songs.length || !songs[currentIndex]) { trackTitle.textContent = '—'; artistName.textContent = '—'; return; }
         const song = songs[currentIndex];
         const raw = song.name || song.file.replace(/\.[^/.]+$/, '');
-        let artist = 'Unknown Artist', title = raw;
+        let artist = window.t('unknownArtist'), title = raw;
         if (raw.includes(' - ')) {
             const parts = raw.split(' - ');
             if (parts.length >= 2) { artist = parts[0].trim(); title = parts.slice(1).join(' - ').trim(); }
@@ -1404,7 +1427,7 @@
     function renderPlaylist() {
         const display = filteredSongs.length ? filteredSongs : songs;
         if (!display.length) {
-            plList.innerHTML = '<div style="padding:8px;color:rgba(255,255,255,0.4);text-align:center;">Нет треков</div>';
+            plList.innerHTML = '<div style="padding:8px;color:rgba(255,255,255,0.4);text-align:center;">' + window.t('noTracks') + '</div>';
             return;
         }
         const fragment = document.createDocumentFragment();
@@ -1417,7 +1440,7 @@
             item.innerHTML = `
                 <span class="pl-num">${(i+1).toString().padStart(2,'0')}</span>
                 <span class="pl-name">${raw}</span>
-                <button class="pl-dl" data-file="${s.file}" data-name="${raw}"><img src="${MEDIA_BASE}icons/download.svg" alt="download" /><span class="btn-tooltip">Скачать</span></button>
+                <button class="pl-dl" data-file="${s.file}" data-name="${raw}"><img src="${MEDIA_BASE}icons/download.svg" alt="download" /><span class="btn-tooltip">${window.t('download')}</span></button>
             `;
             fragment.appendChild(item);
         });
@@ -1470,7 +1493,7 @@
             renderPlaylist();
             renderEqSliders();
         } catch (err) {
-            plList.innerHTML = '<div style="padding:8px;color:rgba(255,0,0,0.6);">❌ Ошибка загрузки</div>';
+            plList.innerHTML = '<div style="padding:8px;color:rgba(255,0,0,0.6);">' + window.t('loadingError') + '</div>';
             renderEqSliders();
         }
     }
@@ -1606,6 +1629,10 @@
     async function init() {
         await loadConfigFromServer();
 
+        // === Инициализация языка ===
+        initLanguageSwitch();
+        window.applyLocale();
+
         setAccentColor(configData.accent_color || '#ff001c');
 
         if (configData.site_title) {
@@ -1707,7 +1734,7 @@
   ⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⣇⠀⠀⠀⠀⠀⢀⣴⣿⣿⣿⣿⣿⣦⣠⣿⣿⣿⣧⠀⢿⣿⣿⢸⣿⣿⠙⣿⣿⣿⣿⣿⣿⡀⣿⣿⣿⣿⣿⣿⣿⠟⣿⣿⣿⣿⣿⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⡿⠋⠉⠀⠀⠀⠉⢿⣿⠀⢿⠇⠀⣸⣿⠏⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
   ⠈⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⡄⠀⠀⠀⢰⡿⠛⠋⠉⠉⠉⠛⠛⠻⠿⢿⣿⣿⠃⢸⣿⡏⢸⣿⣿⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢻⣿⣿⠏⢸⣿⣿⣿⣿⣿⠀⢰⣿⣿⣿⣿⣿⣿⣿⣿⡿⠋⠀⠀⠀⠀⠀⠀⠀⠈⣿⣆⠸⡇⢠⣿⡏⠀⣴⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
   ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣷⣰⠀⠀⠀⠀⢀⠀⠀⠀⠀⠀⣀⣤⣤⠀⠀⡄⠀⠸⣿⣷⠈⣿⣿⢠⣿⣿⣿⣿⣿⣿⣿⣿⣿⡏⠸⣿⣿⠀⢾⣿⣿⣿⣿⣿⣦⣬⣽⣿⣿⣿⣿⣿⣿⠟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⡆⠁⣸⣿⠀⢸⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-  ⠀⠀⠀⠀⠀⠀⠀⠀⠀⣸⣿⡇⣿⡇⠀⠀⠀⠀⠓⣶⣄⠀⢸⣿⠟⢋⣀⠀⠁⠀⠀⠙⢿⠀⢹⣿⣼⣿⣿⣿⢇⣿⣿⣿⣿⣿⡇⠀⢿⣿⡀⠸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣷⡀⣿⣿⠀⣾⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+  ⠀⠀⠀⠀⠀⠀⠀⠀⠀⣸⣿⡇⣿⡇⠀⠀⠀⠀⠓⣶⣄⠀⢸⣿⠟⢋⣀⠀⠁⠀⠀⠙⢿⠀⢹⣿��⣿⣿⣿⢇⣿⣿⣿⣿⣿⡇⠀⢿⣿⡀⠸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣷⡀⣿⣿⠀⣾⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
   ⠀⠀⠀⠀⠀⠀⢸⠀⠀⣿⣿⣠⣿⡇⠀⠀⠘⢄⣀⡈⠛⠀⠘⠁⠞⠁⢀⡀⠈⢀⠀⠀⠀⠀⠈⣿⣿⣿⡿⠋⣼⣿⣿⠇⢸⣿⣷⠀⠈⠻⣧⠀⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠁⠀⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢰⣿⣿⣿⢳⣿⡿⠀⢿⣿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
   ⠀⠀⠀⠀⠀⠀⠈⠀⣦⣿⣿⣿⣿⣷⡀⠀⠀⠈⠛⢿⣶⠀⠀⠀⠀⠀⣅⣈⠀⢀⠀⠀⠀⠀⠀⠙⠋⠉⠁⢾⣿⡿⠃⢀⣾⣿⣿⣧⡀⠀⠈⠛⠦⠈⣉⣻⣿⣿⡿⠿⠋⠁⢀⠀⢀⡼⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣿⣿⣿⠇⣾⣿⢣⡆⢸⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
   ⠀⠀⠀⠀⠀⠀⠀⣤⣿⣿⣿⣿⣿⣿⢧⡀⠀⠀⠀⠀⠉⠀⢸⣄⠀⠄⠀⠀⠀⠈⢀⠀⠀⠀⠀⠀⠀⡆⣤⣀⣀⣠⣴⣿⣿⣿⣿⣿⣿⣦⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣾⣿⣿⢋⣾⣿⣿⣿⡇⢸⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀

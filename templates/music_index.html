@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="{{ url_for('music.static', filename='css/music_index.css') }}">
 </head>
 <body>
-    <button id="settings-top-btn" title="Настройки" class="widget-wrapper">
+    <button id="settings-top-btn" title="" class="widget-wrapper">
         <img src="{{ url_for('music.serve_media_fix', filename='icons/settings.svg') }}" alt="settings" class="btn-icon" />
         <div class="edit-frame">
             <div class="edit-controls">
@@ -26,28 +26,28 @@
                 <img src="{{ url_for('music.serve_media_fix', filename='icons/resize.svg') }}" alt="resize" class="resize-btn" />
             </div>
         </div>
-        <button class="player-btn" id="shuffleBtn" title="Рандом">
+        <button class="player-btn" id="shuffleBtn" title="">
             <svg viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm0.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg>
-            <span class="btn-tooltip">Перемешать</span>
+            <span class="btn-tooltip"></span>
         </button>
-        <button class="player-btn" id="prevBtn" title="Назад">
+        <button class="player-btn" id="prevBtn" title="">
             <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
-            <span class="btn-tooltip">Предыдущий</span>
+            <span class="btn-tooltip"></span>
         </button>
 
         <div class="custom-play-container" id="customPlayBtn">
             <svg viewBox="0 0 384 512" height="1em" xmlns="http://www.w3.org/2000/svg" class="play"><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg>
             <svg viewBox="0 0 320 512" height="1em" xmlns="http://www.w3.org/2000/svg" class="pause"><path d="M48 64C21.5 64 0 85.5 0 112V400c0 26.5 21.5 48 48 48H80c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48H48zm192 0c-26.5 0-48 21.5-48 48V400c0 26.5 21.5 48 48 48h32c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48H240z"/></svg>
-            <span class="btn-tooltip">Играть/Пауза</span>
+            <span class="btn-tooltip"></span>
         </div>
 
-        <button class="player-btn" id="nextBtn" title="Далее">
+        <button class="player-btn" id="nextBtn" title="">
             <svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
-            <span class="btn-tooltip">Следующий</span>
+            <span class="btn-tooltip"></span>
         </button>
-        <button class="player-btn" id="repeatBtn" title="Повтор">
+        <button class="player-btn" id="repeatBtn" title="">
             <svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg>
-            <span class="btn-tooltip">Повтор</span>
+            <span class="btn-tooltip"></span>
         </button>
     </div>
 
@@ -59,8 +59,8 @@
                 <img src="{{ url_for('music.serve_media_fix', filename='icons/resize.svg') }}" alt="resize" class="resize-btn" />
             </div>
         </div>
-        <div class="track-title" id="widget-track-title">—</div>
-        <div class="artist-name" id="widget-artist-name">—</div>
+        <div class="track-title" id="widget-track-title"></div>
+        <div class="artist-name" id="widget-artist-name"></div>
     </div>
 
     <div id="progress-widget" class="widget-wrapper">
@@ -87,7 +87,7 @@
         <div class="custom-vol-container" id="customVolBtn">
             <svg viewBox="0 0 576 512" height="1em" xmlns="http://www.w3.org/2000/svg" class="mute"><path d="M301.1 34.8C312.6 40 320 51.4 320 64V448c0 12.6-7.4 24-18.9 29.2s-25 3.1-34.4-5.3L131.8 352H64c-35.3 0-64-28.7-64-64V224c0-35.3 28.7-64 64-64h67.8L266.7 40.1c9.4-8.4 22.9-10.4 34.4-5.3zM425 167l55 55 55-55c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-55 55 55 55c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-55-55-55 55c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l55-55-55-55c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0z"/></svg>
             <svg viewBox="0 0 448 512" height="1em" xmlns="http://www.w3.org/2000/svg" class="voice"><path d="M301.1 34.8C312.6 40 320 51.4 320 64V448c0 12.6-7.4 24-18.9 29.2s-25 3.1-34.4-5.3L131.8 352H64c-35.3 0-64-28.7-64-64V224c0-35.3 28.7-64 64-64h67.8L266.7 40.1c9.4-8.4 22.9-10.4 34.4-5.3zM412.6 181.5C434.1 199.1 448 225.9 448 256s-13.9 56.9-35.4 74.5c-10.3 8.4-25.4 6.8-33.8-3.5s-6.8-25.4 3.5-33.8C393.1 284.4 400 271 400 256s-6.9-28.4-17.7-37.3c-10.3-8.4-11.8-23.5-3.5-33.8s23.5-11.8 33.8-3.5z"/></svg>
-            <span class="btn-tooltip">Звук</span>
+            <span class="btn-tooltip"></span>
         </div>
         <input type="range" id="widget-vol-slider" min="0" max="100" value="70" step="0.5" />
     </div>
@@ -101,11 +101,11 @@
             </div>
         </div>
         <div class="pl-header">
-            <span>Плейлист</span>
+            <span></span>
             <div class="input-group">
                 <img src="{{ url_for('music.serve_media_fix', filename='icons/search.svg') }}" alt="search" class="search-icon" />
                 <input required="" type="text" name="text" autocomplete="off" class="input" id="widget-search" />
-                <label class="user-label">Поиск...</label>
+                <label class="user-label"></label>
             </div>
         </div>
         <div class="pl-list" id="widget-pl-list"></div>
@@ -121,24 +121,31 @@
     <div id="settings-overlay"></div>
     <div id="settings-panel">
         <div class="settings-header">
-            <h2 id="settings-title">Настройки</h2>
+            <h2 id="settings-title"></h2>
             <button class="settings-close-btn" id="settings-close-btn">×</button>
         </div>
         <div class="settings-content">
             <div class="settings-main">
                 <div class="setting-item">
-                    <span class="label">Название сайта</span>
+                    <span class="label"></span>
                     <input type="text" class="setting-input" id="siteTitleInput" placeholder="None" value="" />
                 </div>
                 <div class="setting-item">
-                    <span class="label">Режим редактирования</span>
+                    <span class="label"></span>
                     <label class="toggle-switch">
                         <input type="checkbox" id="editModeToggle" />
                         <span class="toggle-slider"></span>
                     </label>
                 </div>
                 <div class="setting-item">
-                    <span class="label">Акцент</span>
+                    <span class="label"></span>
+                    <div class="lang-switch">
+                        <button class="lang-btn active" data-lang="ru">RU</button>
+                        <button class="lang-btn" data-lang="eng">ENG</button>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <span class="label"></span>
                     <div class="color-picker-wrapper" id="colorPickerWrapper">
                         <input type="color" id="accentColorPicker" value="#ff001c" />
                     </div>
@@ -146,12 +153,12 @@
             </div>
 
             <div class="opacity-slider-wrap">
-                <span class="label">Прозрачность визуализатора</span>
+                <span class="label"></span>
                 <input type="range" id="visualizerOpacity" min="0" max="100" value="30" />
             </div>
 
             <div class="setting-item">
-                <span class="label">Плейлист</span>
+                <span class="label"></span>
                 <label class="toggle-switch">
                     <input type="checkbox" id="playlistToggle" checked />
                     <span class="toggle-slider"></span>
@@ -160,22 +167,22 @@
 
             <div class="settings-effects-modes">
                 <div class="effects-modes-header">
-                    <span>Эффекты</span>
+                    <span></span>
                 </div>
                 <div class="effects-mode-buttons" id="effectsModeButtons">
-                    <button class="effects-mode-btn active" data-mode="0">Выкл</button>
-                    <button class="effects-mode-btn" data-mode="1">Огонь</button>
-                    <button class="effects-mode-btn" data-mode="2">Дождь</button>
+                    <button class="effects-mode-btn active" data-mode="0"></button>
+                    <button class="effects-mode-btn" data-mode="1"></button>
+                    <button class="effects-mode-btn" data-mode="2"></button>
                 </div>
             </div>
 
             <div class="opacity-slider-wrap">
-                <span class="label">Прозрачность эффектов</span>
+                <span class="label"></span>
                 <input type="range" id="effectsOpacity" min="0" max="100" value="50" />
             </div>
 
             <div class="setting-item">
-                <span class="label">Цвет эффектов</span>
+                <span class="label"></span>
                 <div class="color-picker-wrapper" id="effectsColorWrapper">
                     <input type="color" id="effectsColorPicker" value="#ff001c" />
                 </div>
@@ -183,10 +190,10 @@
 
             <div class="settings-eq-modes">
                 <div class="eq-modes-header">
-                    <span>Визуализатор</span>
+                    <span></span>
                 </div>
                 <div class="eq-mode-buttons" id="eqModeButtons">
-                    <button class="eq-mode-btn active" data-mode="0">Выкл</button>
+                    <button class="eq-mode-btn active" data-mode="0"></button>
                     <button class="eq-mode-btn" data-mode="1">1</button>
                     <button class="eq-mode-btn" data-mode="2">2</button>
                     <button class="eq-mode-btn" data-mode="3">3</button>
@@ -195,19 +202,19 @@
 
             <div class="settings-eq">
                 <div class="eq-header">
-                    <span>Эквалайзер</span>
-                    <button class="eq-reset" id="widget-eq-reset">⟳ сброс</button>
+                    <span></span>
+                    <button class="eq-reset" id="widget-eq-reset"></button>
                 </div>
                 <div class="eq-sliders" id="widget-eq-sliders"></div>
             </div>
             <div class="about-section">
-                <div class="about-title">О плеере</div>
+                <div class="about-title"></div>
                 <div class="about-row">
-                    <span class="about-label">Версия</span>
+                    <span class="about-label"></span>
                     <span class="about-value">2.0.8</span>
                 </div>
                 <div class="about-row">
-                    <span class="about-label">Разработчик</span>
+                    <span class="about-label"></span>
                     <span class="about-value">{{ developer }}</span>
                 </div>
             </div>
@@ -217,7 +224,7 @@
     <div id="color-picker-modal" class="color-picker-modal">
         <div class="color-picker-modal-content">
             <div class="color-picker-modal-header">
-                <h3>Выбор цвета</h3>
+                <h3></h3>
                 <button class="color-picker-modal-close" id="colorPickerModalClose">×</button>
             </div>
             <div class="color-picker-modal-body">
@@ -225,8 +232,8 @@
                 <canvas id="cp-brightness" width="520" height="30"></canvas>
                 <canvas id="cp-grayscale" width="520" height="30"></canvas>
                 <div class="color-picker-modal-actions">
-                    <button class="color-picker-modal-cancel" id="colorPickerModalCancel">Отмена</button>
-                    <button class="color-picker-modal-apply" id="colorPickerModalApply">Применить</button>
+                    <button class="color-picker-modal-cancel" id="colorPickerModalCancel"></button>
+                    <button class="color-picker-modal-apply" id="colorPickerModalApply"></button>
                 </div>
             </div>
         </div>
@@ -242,6 +249,7 @@
             mediaBase: "{{ url_for('music.serve_media_fix', filename='') }}"
         };
     </script>
+    <script src="{{ url_for('music.static', filename='js/locales.js') }}"></script>
     <script src="{{ url_for('music.static', filename='js/music_index.js') }}"></script>
 </body>
 </html>
