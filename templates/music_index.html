@@ -214,6 +214,24 @@
         </div>
     </div>
 
+    <div id="color-picker-modal" class="color-picker-modal">
+        <div class="color-picker-modal-content">
+            <div class="color-picker-modal-header">
+                <h3>Выбор цвета</h3>
+                <button class="color-picker-modal-close" id="colorPickerModalClose">×</button>
+            </div>
+            <div class="color-picker-modal-body">
+                <canvas id="cp-wheel" width="520" height="520"></canvas>
+                <canvas id="cp-brightness" width="520" height="30"></canvas>
+                <canvas id="cp-grayscale" width="520" height="30"></canvas>
+                <div class="color-picker-modal-actions">
+                    <button class="color-picker-modal-cancel" id="colorPickerModalCancel">Отмена</button>
+                    <button class="color-picker-modal-apply" id="colorPickerModalApply">Применить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <audio id="audio-player" preload="metadata" style="display:none"></audio>
 
     <script>
