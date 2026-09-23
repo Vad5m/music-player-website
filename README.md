@@ -18,7 +18,7 @@
 
 - **Python 3.6+**
 - **Flask** (web framework)
-- **Web browser** (Chrome, Firefox, Edge, etc.)
+- **Web browser** (Firefox, Chrome, Yandex...)
 
 ## 🚀 Installation
 
