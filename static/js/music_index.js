@@ -618,7 +618,6 @@
         scheduleSave();
     });
 
-    // === Language switch ===
     function initLanguageSwitch() {
         const savedLang = configData.language || 'ru';
         window.currentLocale = savedLang;
@@ -632,7 +631,6 @@
                 configData.language = lang;
                 langBtns.forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
                 window.applyLocale();
-                // Обновляем динамические тексты
                 renderPlaylist();
                 updateTrackDisplay();
                 scheduleSave();
@@ -662,6 +660,7 @@
     let cpWheelImage = null;
     let cpWheelImageValue = -1;
     let cpGrayValue = 0;
+    let colorPickerMouseDownTarget = null;
 
     const CP_SIZE = cpWheel.width;
     const CP_CX = CP_SIZE / 2;
@@ -669,12 +668,12 @@
     const CP_OUTER = Math.min(cpWheel.width, cpWheel.height) / 2 - 20;
     const CP_INNER = CP_OUTER * 0.75;
     const CP_MID_R = (CP_OUTER + CP_INNER) / 2;
-    const CP_B_PAD = 4;
+    const CP_B_PAD = 16;
     const CP_B_H = cpBrightness.height;
-    const CP_bRect = { x: CP_B_PAD, y: 8, w: cpBrightness.width - CP_B_PAD * 2, h: CP_B_H - 16 };
-    const CP_G_PAD = 4;
+    const CP_bRect = { x: CP_B_PAD, y: 10, w: cpBrightness.width - CP_B_PAD * 2, h: CP_B_H - 20 };
+    const CP_G_PAD = 16;
     const CP_G_H = cpGrayscale.height;
-    const CP_gRect = { x: CP_G_PAD, y: 8, w: cpGrayscale.width - CP_G_PAD * 2, h: CP_G_H - 16 };
+    const CP_gRect = { x: CP_G_PAD, y: 10, w: cpGrayscale.width - CP_G_PAD * 2, h: CP_G_H - 20 };
 
     const cpCtx = cpWheel.getContext('2d');
     const cpBCtx = cpBrightness.getContext('2d');
@@ -845,7 +844,7 @@
         const hx = CP_bRect.x + cpValue * CP_bRect.w;
         const hy = CP_B_H / 2;
         const fill = `rgb(${cpRgb[0]}, ${cpRgb[1]}, ${cpRgb[2]})`;
-        cpDrawDiamond(cpBCtx, hx, hy, 11, fill);
+        cpDrawDiamond(cpBCtx, hx, hy, 10, fill);
     }
 
     function cpDrawGrayscale() {
@@ -862,7 +861,7 @@
         const hx = CP_gRect.x + cpGrayValue * CP_gRect.w;
         const hy = CP_G_H / 2;
         const fill = `rgb(${cpRgb[0]}, ${cpRgb[1]}, ${cpRgb[2]})`;
-        cpDrawDiamond(cpGCtx, hx, hy, 11, fill);
+        cpDrawDiamond(cpGCtx, hx, hy, 10, fill);
     }
 
     function cpGetMousePos(e, cv) {
@@ -934,6 +933,9 @@
     function closeColorPicker() {
         colorPickerModal.classList.remove('open');
         activeColorTarget = null;
+        cpDragging = false;
+        cpBrightnessDragging = false;
+        cpGrayscaleDragging = false;
     }
 
     cpWheel.addEventListener('mousedown', e => {
@@ -989,9 +991,23 @@
         closeColorPicker();
     });
 
-    colorPickerModal.addEventListener('click', (e) => {
-        if (e.target === colorPickerModal) closeColorPicker();
+    colorPickerModal.addEventListener('mousedown', (e) => {
+        colorPickerMouseDownTarget = e.target;
     });
+
+    colorPickerModal.addEventListener('click', (e) => {
+        if (e.target === colorPickerModal && colorPickerMouseDownTarget === colorPickerModal) {
+            closeColorPicker();
+        }
+    });
+
+    function getContrastTextColor(hex) {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+        return luminance > 0.6 ? '#000000' : '#ffffff';
+    }
 
     function setAccentColor(hex) {
         document.documentElement.style.setProperty('--neon-red', hex);
@@ -1000,6 +1016,13 @@
         document.documentElement.style.setProperty('--neon-dim', `rgba(${r},${g},${b},0.2)`);
         document.documentElement.style.setProperty('--neon-border', `rgba(${r},${g},${b},0.4)`);
         document.documentElement.style.setProperty('--neon-border-light', `rgba(${r},${g},${b},0.3)`);
+
+        const textColor = getContrastTextColor(hex);
+        document.documentElement.style.setProperty('--accent-text-color', textColor);
+
+        const isLight = textColor === '#000000';
+        document.documentElement.classList.toggle('light-accent', isLight);
+
         pickerWrapper.style.background = hex;
         configData.accent_color = hex;
         colorPicker.value = hex;
@@ -1629,7 +1652,6 @@
     async function init() {
         await loadConfigFromServer();
 
-        // === Инициализация языка ===
         initLanguageSwitch();
         window.applyLocale();
 

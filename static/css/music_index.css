@@ -5,6 +5,7 @@
     --neon-dim: rgba(255, 0, 28, 0.2);
     --neon-border: rgba(255, 0, 28, 0.4);
     --neon-border-light: rgba(255, 0, 28, 0.3);
+    --accent-text-color: #ffffff;
     --visualizer-opacity: 0.3;
     --effects-opacity: 0.5;
     --effects-color: #ff001c;
@@ -160,7 +161,9 @@ body {
     transition: 0.2s;
 }
 #player-widget .player-btn.active {
-    color: var(--neon-red);
+    color: var(--accent-text-color);
+    background: var(--neon-red);
+    border-color: var(--neon-red);
 }
 #player-widget .player-btn.active svg {
     filter: drop-shadow(0 0 8px var(--neon-glow));
@@ -837,7 +840,6 @@ body {
     opacity: 0;
 }
 
-/* === Language switch === */
 .lang-switch {
     display: flex;
     gap: 6px;
@@ -868,7 +870,7 @@ body {
 
 .lang-btn.active {
     background: var(--neon-red);
-    color: #fff;
+    color: var(--accent-text-color);
     box-shadow: 0 0 12px var(--neon-glow);
 }
 
@@ -963,7 +965,7 @@ body {
 }
 .eq-mode-btn.active, .effects-mode-btn.active {
     background: var(--neon-red);
-    color: white;
+    color: var(--accent-text-color);
     border-color: var(--neon-red);
     box-shadow: 0 0 16px var(--neon-glow);
 }
@@ -1232,6 +1234,7 @@ body {
     display: block;
     max-width: 100%;
     height: auto;
+    overflow: visible;
 }
 #cp-wheel {
     cursor: crosshair;
@@ -1239,6 +1242,7 @@ body {
 }
 #cp-brightness, #cp-grayscale {
     cursor: pointer;
+    overflow: visible;
 }
 .color-picker-modal-actions {
     display: flex;
@@ -1264,7 +1268,7 @@ body {
 }
 .color-picker-modal-apply {
     background: var(--neon-red);
-    color: white;
+    color: var(--accent-text-color);
     border-color: var(--neon-red);
     box-shadow: 0 0 16px var(--neon-glow);
 }
