@@ -18,6 +18,8 @@ os.makedirs(MEDIA_FOLDER, exist_ok=True)
 
 DEVELOPER = "vad5m_dev"
 
+SUPPORTED_EXTENSIONS = (".mp3", ".m4a", ".aac", ".ogg", ".wav", ".flac", ".opus", ".webm")
+
 python = """
 ⠀⠀⠀⠀⠀⠀⠀⢀⣤⣴⣶⣶⣶⣶⣶⣦⣄
 ⠀⠀⠀⠀⠀⠀⢀⣾⠟⠛⢿⣿⣿⣿⣿⣿⣿⣷
@@ -91,8 +93,9 @@ def save_config(data):
 def get_music_list():
     music_files = []
     for file in os.listdir(MUSIC_FOLDER):
-        if file.lower().endswith(".mp3"):
+        if file.lower().endswith(SUPPORTED_EXTENSIONS):
             music_files.append({"name": os.path.splitext(file)[0], "file": file})
+    music_files.sort(key=lambda x: x["name"].lower())
     return music_files
 
 @bp.route("/")
