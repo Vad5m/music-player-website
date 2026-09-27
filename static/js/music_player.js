@@ -1,4 +1,3 @@
-
 (function (App) {
     'use strict';
 
@@ -193,7 +192,7 @@
         if (index < 0) index = songs.length - 1;
         if (index >= songs.length) index = 0;
         currentIndex = index;
-        audio.src = MUSIC_BASE + songs[currentIndex].file;
+        audio.src = MUSIC_BASE + encodeURIComponent(songs[currentIndex].file);
         updateTrackDisplay();
         renderPlaylist();
         progressLevel.value = 0;
@@ -356,7 +355,7 @@
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const a = document.createElement('a');
-                a.href = MUSIC_BASE + btn.dataset.file;
+                a.href = MUSIC_BASE + encodeURIComponent(btn.dataset.file);
                 a.download = btn.dataset.name || btn.dataset.file;
                 document.body.appendChild(a); a.click(); document.body.removeChild(a);
             });
