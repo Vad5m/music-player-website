@@ -1,3 +1,4 @@
+// music_core.js
 window.MusicApp = window.MusicApp || {};
 
 (function (App) {
@@ -8,11 +9,12 @@ window.MusicApp = window.MusicApp || {};
     const MUSIC_BASE = window.MUSIC_URLS.musicBase;
     const MEDIA_BASE = window.MUSIC_URLS.mediaBase;
 
-    const widgetIds = ['profile', 'settings', 'player', 'info', 'progress', 'volume', 'playlist'];
+    const widgetIds = ['profile', 'settings', 'file', 'player', 'info', 'progress', 'volume', 'playlist'];
 
     const widgetState = {
         profile:  { x: 80, y: 20, width: 48, height: 48, rotation: 0, scale: 1, fontScale: 1 },
         settings: { x: 20, y: 20, width: 48, height: 48, rotation: 0, scale: 1, fontScale: 1 },
+        file:     { x: 140, y: 20, width: 48, height: 48, rotation: 0, scale: 1, fontScale: 1 },
         player:   { x: 100, y: 100, width: 280, height: 70, rotation: 0, scale: 1, fontScale: 1 },
         info:     { x: 120, y: 40, width: 220, height: 80, rotation: 0, scale: 1, fontScale: 1 },
         progress: { x: 0, y: 0, width: 400, height: 44, rotation: 0, scale: 1, fontScale: 1 },
@@ -45,6 +47,8 @@ window.MusicApp = window.MusicApp || {};
             widgets[id] = document.getElementById('profile-top-btn');
         } else if (id === 'settings') {
             widgets[id] = document.getElementById('settings-top-btn');
+        } else if (id === 'file') {
+            widgets[id] = document.getElementById('file-top-btn');
         } else {
             widgets[id] = document.getElementById(id + '-widget');
         }
@@ -97,6 +101,7 @@ window.MusicApp = window.MusicApp || {};
     App.MUSIC_LIST_API = MUSIC_LIST_API;
     App.MUSIC_BASE = MUSIC_BASE;
     App.MEDIA_BASE = MEDIA_BASE;
+    App.MUSIC_URLS = window.MUSIC_URLS;
     App.widgetIds = widgetIds;
     App.widgetState = widgetState;
     App.configData = configData;

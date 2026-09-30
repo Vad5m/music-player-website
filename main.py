@@ -1,6 +1,8 @@
+# main.py
 import json
 import os
 import sys
+import uuid
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 if CURRENT_DIR not in sys.path:
@@ -25,7 +27,9 @@ DEVELOPER = "vad5m_dev"
 SUPPORTED_EXTENSIONS = (".mp3", ".m4a", ".aac", ".ogg", ".wav", ".flac", ".opus", ".webm")
 
 DEFAULT_WIDGETS = {
+    "profile": {"x": 80, "y": 20, "width": 48, "height": 48, "rotation": 0, "scale": 1, "fontScale": 1},
     "settings": {"x": 20, "y": 20, "width": 48, "height": 48, "rotation": 0, "scale": 1, "fontScale": 1},
+    "file": {"x": 140, "y": 20, "width": 48, "height": 48, "rotation": 0, "scale": 1, "fontScale": 1},
     "player": {"x": 100, "y": 100, "width": 280, "height": 70, "rotation": 0, "scale": 1, "fontScale": 1},
     "info": {"x": 120, "y": 40, "width": 220, "height": 80, "rotation": 0, "scale": 1, "fontScale": 1},
     "progress": {"x": 0, "y": 0, "width": 400, "height": 44, "rotation": 0, "scale": 1, "fontScale": 1},
@@ -116,6 +120,38 @@ def api_update_config():
 @bp.route('/media/<path:filename>')
 def serve_media_fix(filename):
     return send_from_directory(MEDIA_FOLDER, filename)
+
+@bp.route("/api/upload-music", methods=["POST"])
+def api_upload_music():
+    if 'files' not in request.files:
+        return jsonify({"error": "No files"}), 400
+    files = request.files.getlist('files')
+    uploaded = []
+    for f in files:
+        if f.filename and f.filename.lower().endswith(SUPPORTED_EXTENSIONS):
+            safe_name = f.filename
+            base, ext = os.path.splitext(safe_name)
+            counter = 1
+            dest = os.path.join(MUSIC_FOLDER, safe_name)
+            while os.path.exists(dest):
+                safe_name = f"{base}_{counter}{ext}"
+                dest = os.path.join(MUSIC_FOLDER, safe_name)
+                counter += 1
+            f.save(dest)
+            uploaded.append({"name": os.path.splitext(safe_name)[0], "file": safe_name})
+    return jsonify({"status": "ok", "uploaded": uploaded}), 200
+
+@bp.route("/api/delete-music", methods=["POST"])
+def api_delete_music():
+    data = request.get_json()
+    if not data or 'file' not in data:
+        return jsonify({"error": "Missing file"}), 400
+    filename = data['file']
+    filepath = os.path.join(MUSIC_FOLDER, filename)
+    if os.path.exists(filepath) and os.path.isfile(filepath):
+        os.remove(filepath)
+        return jsonify({"status": "ok"}), 200
+    return jsonify({"error": "File not found"}), 404
 
 def create_app():
     bg.init_db()

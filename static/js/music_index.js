@@ -9,8 +9,19 @@
     const profileOverlay = document.getElementById('profile-overlay');
     const profileClose = document.getElementById('profile-close-btn');
 
+    const filePanel = document.getElementById('file-panel');
+    const fileOverlay = document.getElementById('file-overlay');
+    const fileClose = document.getElementById('file-close-btn');
+    const fileAddBtn = document.getElementById('file-add-btn');
+    const fileInput = document.getElementById('file-input');
+    const fileList = document.getElementById('file-list');
+    const fileSearch = document.getElementById('file-search');
+
+    let fileQuery = '';
+
     function openSettings() {
         closeProfile();
+        closeFilePanel();
         settingsPanel.classList.add('open');
         settingsOverlay.classList.add('active');
         document.body.style.overflow = 'hidden';
@@ -23,6 +34,7 @@
 
     function openProfile() {
         closeSettings();
+        closeFilePanel();
         profilePanel.classList.add('open');
         profileOverlay.classList.add('active');
         document.body.style.overflow = 'hidden';
@@ -32,6 +44,170 @@
         profileOverlay.classList.remove('active');
         document.body.style.overflow = '';
     }
+
+    function openFilePanel() {
+        closeSettings();
+        closeProfile();
+        filePanel.classList.add('open');
+        fileOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        renderFileList();
+    }
+    function closeFilePanel() {
+        filePanel.classList.remove('open');
+        fileOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    function renderFileList() {
+        const songs = App.getSongs ? App.getSongs() : [];
+        const q = fileQuery.trim().toLowerCase();
+        const display = q
+            ? songs.filter(s => (s.name || s.file).toLowerCase().includes(q))
+            : songs;
+
+        if (!display.length) {
+            fileList.innerHTML = '<div style="padding:12px;color:rgba(255,255,255,0.4);text-align:center;">' + window.t('noTracks') + '</div>';
+            return;
+        }
+
+        const currentIdx = App.getCurrentIndex ? App.getCurrentIndex() : -1;
+        const fragment = document.createDocumentFragment();
+
+        display.forEach((s, i) => {
+            const raw = s.name || s.file.replace(/\.[^/.]+$/, '');
+            const origIdx = songs.findIndex(o => o.file === s.file);
+            const item = document.createElement('div');
+            item.className = 'file-item' + (origIdx === currentIdx ? ' active-song' : '');
+            item.dataset.file = s.file;
+            item.dataset.index = origIdx;
+            item.innerHTML = `
+                <span class="file-num">${(i + 1).toString().padStart(2, '0')}</span>
+                <span class="file-name">${raw}</span>
+                <button class="file-dl" data-file="${s.file}" data-name="${raw}">
+                    <img src="${App.MEDIA_BASE}icons/download.svg" alt="download" />
+                    <span class="btn-tooltip">${window.t('download')}</span>
+                </button>
+                <button class="file-del" data-file="${s.file}">
+                    <img src="${App.MEDIA_BASE}icons/trash.svg" alt="delete" />
+                    <span class="btn-tooltip">${window.t('delete')}</span>
+                </button>
+            `;
+            fragment.appendChild(item);
+        });
+
+        fileList.innerHTML = '';
+        fileList.appendChild(fragment);
+
+        fileList.querySelectorAll('.file-item').forEach(el => {
+            el.addEventListener('click', (e) => {
+                if (e.target.closest('.file-dl') || e.target.closest('.file-del')) return;
+                const idx = parseInt(el.dataset.index);
+                if (App.loadSong) App.loadSong(idx);
+                if (App.togglePlay && !App.isPlaying()) App.togglePlay();
+                else if (App.getAudio) App.getAudio().play().catch(() => {});
+                renderFileList();
+            });
+        });
+
+        fileList.querySelectorAll('.file-dl').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const a = document.createElement('a');
+                a.href = App.MUSIC_BASE + encodeURIComponent(btn.dataset.file);
+                a.download = btn.dataset.name || btn.dataset.file;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            });
+        });
+
+        fileList.querySelectorAll('.file-del').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                deleteFile(btn.dataset.file);
+            });
+        });
+    }
+
+    async function deleteFile(file) {
+        try {
+            const res = await fetch(App.MUSIC_URLS.deleteMusic, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ file: file })
+            });
+            if (res.ok) {
+                await App.fetchSongs();
+                renderFileList();
+            }
+        } catch (e) {
+            console.warn('Delete failed');
+        }
+    }
+
+    async function uploadFiles(files) {
+        if (!files || !files.length) return;
+        const formData = new FormData();
+        for (const f of files) {
+            formData.append('files', f);
+        }
+        try {
+            const res = await fetch(App.MUSIC_URLS.upload, {
+                method: 'POST',
+                body: formData
+            });
+            if (res.ok) {
+                await App.fetchSongs();
+                renderFileList();
+            }
+        } catch (e) {
+            console.warn('Upload failed');
+        }
+    }
+
+    document.getElementById('file-top-btn').addEventListener('click', function (e) {
+        if (e.target.closest('.edit-controls')) return;
+        if (filePanel.classList.contains('open')) closeFilePanel();
+        else openFilePanel();
+    });
+
+    fileClose.addEventListener('click', closeFilePanel);
+    fileOverlay.addEventListener('click', closeFilePanel);
+
+    fileAddBtn.addEventListener('click', () => {
+        fileInput.click();
+    });
+
+    fileInput.addEventListener('change', () => {
+        uploadFiles(fileInput.files);
+        fileInput.value = '';
+    });
+
+    fileSearch.addEventListener('input', (e) => {
+        fileQuery = e.target.value;
+        renderFileList();
+    });
+
+    fileList.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        fileList.classList.add('drag-over');
+    });
+
+    fileList.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        fileList.classList.remove('drag-over');
+    });
+
+    fileList.addEventListener('drop', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        fileList.classList.remove('drag-over');
+        const files = e.dataTransfer.files;
+        uploadFiles(files);
+    });
 
     document.getElementById('settings-top-btn').addEventListener('click', function (e) {
         if (e.target.closest('.edit-controls')) return;
@@ -51,6 +227,7 @@
         if (e.key === 'Escape') {
             if (settingsPanel.classList.contains('open')) closeSettings();
             if (profilePanel.classList.contains('open')) closeProfile();
+            if (filePanel.classList.contains('open')) closeFilePanel();
         }
     });
 
@@ -76,6 +253,7 @@
                 langBtns.forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
                 window.applyLocale();
                 App.renderPlaylist();
+                renderFileList();
                 App.scheduleSave();
             });
         });
@@ -166,11 +344,6 @@
             else plWidget.classList.remove('hidden');
         }
 
-        if (App.config.eq_gains) {
-            for (let i = 0; i < Math.min(App.config.eq_gains.length, 7); i++) {
-            }
-        }
-
         if (App.config.widgets) {
             for (const id of App.widgetIds) {
                 if (App.config.widgets[id]) App.widgetState[id] = App.config.widgets[id];
@@ -179,7 +352,7 @@
         App.updateAllWidgets();
         for (const id of App.widgetIds) App.initWidgetControls(id);
 
-        App.fetchSongs();
+        await App.fetchSongs();
 
         const volSlider = App.getVolSlider();
         if (App.config.volume !== undefined) volSlider.value = App.config.volume;
@@ -199,5 +372,9 @@
         }, 1000);
     }
 
-  init();
+    App.renderFileList = renderFileList;
+    App.openFilePanel = openFilePanel;
+    App.closeFilePanel = closeFilePanel;
+
+    init();
 })(window.MusicApp);

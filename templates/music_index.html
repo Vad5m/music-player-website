@@ -29,6 +29,17 @@
         </div>
     </button>
 
+    <button id="file-top-btn" title="" class="widget-wrapper">
+        <img src="{{ url_for('music.static', filename='icons/file.svg') }}" alt="file" class="btn-icon" />
+        <div class="edit-frame">
+            <div class="edit-controls">
+                <img src="{{ url_for('music.serve_media_fix', filename='icons/move.svg') }}" alt="move" class="move-btn" />
+                <img src="{{ url_for('music.serve_media_fix', filename='icons/rotate.svg') }}" alt="rotate" class="rotate-btn" />
+                <img src="{{ url_for('music.serve_media_fix', filename='icons/resize.svg') }}" alt="resize" class="resize-btn" />
+            </div>
+        </div>
+    </button>
+
     <div id="player-widget" class="widget-wrapper">
         <div class="edit-frame">
             <div class="edit-controls">
@@ -128,6 +139,28 @@
 
     <canvas id="effects-fire-canvas" class="hidden"></canvas>
     <canvas id="effects-rain-canvas" class="hidden"></canvas>
+
+    <div id="file-overlay"></div>
+    <div id="file-panel">
+        <div class="settings-header">
+            <h2 id="file-title"></h2>
+            <div class="file-header-actions">
+                <button class="file-add-btn" id="file-add-btn" title="">
+                    <img src="{{ url_for('music.static', filename='icons/circle-plus.svg') }}" alt="add" />
+                </button>
+                <button class="settings-close-btn" id="file-close-btn">×</button>
+            </div>
+        </div>
+        <div class="settings-content">
+            <div class="input-group file-search-group">
+                <img src="{{ url_for('music.serve_media_fix', filename='icons/search.svg') }}" alt="search" class="search-icon" />
+                <input required="" type="text" name="text" autocomplete="off" class="input" id="file-search" />
+                <label class="user-label"></label>
+            </div>
+            <div class="file-list" id="file-list"></div>
+        </div>
+        <input type="file" id="file-input" accept=".mp3,.m4a,.aac,.ogg,.wav,.flac,.opus,.webm" multiple hidden />
+    </div>
 
     <div id="settings-overlay"></div>
     <div id="settings-panel">
@@ -305,7 +338,9 @@
             config: "{{ url_for('music.api_get_config') }}",
             musicList: "{{ url_for('music.api_music_list') }}",
             musicBase: "{{ url_for('music.serve_music', filename='') }}",
-            mediaBase: "{{ url_for('music.serve_media_fix', filename='') }}"
+            mediaBase: "{{ url_for('music.serve_media_fix', filename='') }}",
+            upload: "{{ url_for('music.api_upload_music') }}",
+            deleteMusic: "{{ url_for('music.api_delete_music') }}"
         };
     </script>
     <script src="{{ url_for('music.static', filename='js/locales.js') }}"></script>
