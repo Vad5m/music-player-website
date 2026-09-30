@@ -1,4 +1,3 @@
-
 window.MusicApp = window.MusicApp || {};
 
 (function (App) {
@@ -9,9 +8,10 @@ window.MusicApp = window.MusicApp || {};
     const MUSIC_BASE = window.MUSIC_URLS.musicBase;
     const MEDIA_BASE = window.MUSIC_URLS.mediaBase;
 
-    const widgetIds = ['settings', 'player', 'info', 'progress', 'volume', 'playlist'];
+    const widgetIds = ['profile', 'settings', 'player', 'info', 'progress', 'volume', 'playlist'];
 
     const widgetState = {
+        profile:  { x: 80, y: 20, width: 48, height: 48, rotation: 0, scale: 1, fontScale: 1 },
         settings: { x: 20, y: 20, width: 48, height: 48, rotation: 0, scale: 1, fontScale: 1 },
         player:   { x: 100, y: 100, width: 280, height: 70, rotation: 0, scale: 1, fontScale: 1 },
         info:     { x: 120, y: 40, width: 220, height: 80, rotation: 0, scale: 1, fontScale: 1 },
@@ -41,7 +41,13 @@ window.MusicApp = window.MusicApp || {};
 
     const widgets = {};
     for (const id of widgetIds) {
-        widgets[id] = document.getElementById(id + '-widget') || document.getElementById('settings-top-btn');
+        if (id === 'profile') {
+            widgets[id] = document.getElementById('profile-top-btn');
+        } else if (id === 'settings') {
+            widgets[id] = document.getElementById('settings-top-btn');
+        } else {
+            widgets[id] = document.getElementById(id + '-widget');
+        }
     }
 
     async function loadConfigFromServer() {
@@ -58,7 +64,7 @@ window.MusicApp = window.MusicApp || {};
             configLoaded = true;
             return true;
         } catch (e) {
-            console.warn('Failed to load config from server, using defaults, заеьбало блять');
+            console.warn('Failed to load config from server, using defaults');
             return false;
         }
     }

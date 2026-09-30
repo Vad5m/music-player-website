@@ -1,4 +1,3 @@
-
 (function (App) {
     'use strict';
 
@@ -11,7 +10,7 @@
         el.style.right = 'auto';
         el.style.bottom = 'auto';
         el.style.transform = `rotate(${w.rotation}deg)`;
-        if (id === 'settings') {
+        if (id === 'settings' || id === 'profile') {
             el.style.width = w.width + 'px';
             el.style.height = w.height + 'px';
             const icon = el.querySelector('.btn-icon');
@@ -209,7 +208,7 @@
             const el = App.widgets[widgetId];
             const dx = e.clientX - startX;
             const dy = e.clientY - startY;
-            if (widgetId === 'settings') {
+            if (widgetId === 'settings' || widgetId === 'profile') {
                 let nw = Math.max(40, Math.min(startW + dx, window.innerWidth - 20));
                 let nh = Math.max(40, Math.min(startH + dy, window.innerHeight - 20));
                 w.width = nw; w.height = nh;

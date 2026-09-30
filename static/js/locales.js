@@ -35,7 +35,18 @@ window.LOCALES = {
         colorPicker: "Выбор цвета",
         cancel: "Отмена",
         apply: "Применить",
-        unknownTitle: "-"
+        unknownTitle: "-",
+        profile: "Профиль",
+        online: "Онлайн",
+        tracks: "Треков",
+        playlists: "Плейлистов",
+        background: "Фон",
+        loadingView: "Вид загрузки",
+        sliderIcon: "Слайдер иконка",
+        textAnimation: "Анимация текста",
+        model3d: "3D модель",
+        cursor: "Курсор",
+        siteIcon: "Иконка сайта"
     },
     eng: {
         shuffle: "Shuffle",
@@ -73,7 +84,18 @@ window.LOCALES = {
         colorPicker: "Color picker",
         cancel: "Cancel",
         apply: "Apply",
-        unknownTitle: "-"
+        unknownTitle: "-",
+        profile: "Profile",
+        online: "Online",
+        tracks: "Tracks",
+        playlists: "Playlists",
+        background: "Background",
+        loadingView: "Loading view",
+        sliderIcon: "Slider icon",
+        textAnimation: "Text animation",
+        model3d: "3D model",
+        cursor: "Cursor",
+        siteIcon: "Site icon"
     }
 };
 
@@ -127,6 +149,9 @@ window.applyLocale = function() {
     const settingsTitle = document.getElementById('settings-title');
     if (settingsTitle) settingsTitle.textContent = window.t('settings');
 
+    const profileTitle = document.getElementById('profile-title');
+    if (profileTitle) profileTitle.textContent = window.t('profile');
+
     const labels = document.querySelectorAll('#settings-panel .settings-main .setting-item .label');
     if (labels.length >= 1) {
         const labelKeys = ['siteTitle', 'editMode', 'language', 'accent'];
@@ -134,6 +159,12 @@ window.applyLocale = function() {
             if (labelKeys[i]) label.textContent = window.t(labelKeys[i]);
         });
     }
+
+    const newSettingLabels = document.querySelectorAll('#settings-panel .new-settings-item .label');
+    const newSettingKeys = ['background', 'loadingView', 'sliderIcon', 'textAnimation', 'model3d', 'cursor', 'siteIcon'];
+    newSettingLabels.forEach((label, i) => {
+        if (newSettingKeys[i]) label.textContent = window.t(newSettingKeys[i]);
+    });
 
     const opacityLabels = document.querySelectorAll('#settings-panel .opacity-slider-wrap .label');
     if (opacityLabels.length >= 1) {
@@ -199,4 +230,10 @@ window.applyLocale = function() {
     if (cpCancel) cpCancel.textContent = window.t('cancel');
     const cpApply = document.getElementById('colorPickerModalApply');
     if (cpApply) cpApply.textContent = window.t('apply');
+
+    const profileStats = document.querySelectorAll('.profile-stat .stat-label');
+    if (profileStats.length >= 2) {
+        profileStats[0].textContent = window.t('tracks');
+        profileStats[1].textContent = window.t('playlists');
+    }
 };

@@ -7,6 +7,17 @@
     <link rel="stylesheet" href="{{ url_for('music.static', filename='css/music_index.css') }}">
 </head>
 <body>
+    <button id="profile-top-btn" title="" class="widget-wrapper">
+        <img src="{{ url_for('music.static', filename='icons/profile.svg') }}" alt="profile" class="btn-icon" />
+        <div class="edit-frame">
+            <div class="edit-controls">
+                <img src="{{ url_for('music.serve_media_fix', filename='icons/move.svg') }}" alt="move" class="move-btn" />
+                <img src="{{ url_for('music.serve_media_fix', filename='icons/rotate.svg') }}" alt="rotate" class="rotate-btn" />
+                <img src="{{ url_for('music.serve_media_fix', filename='icons/resize.svg') }}" alt="resize" class="resize-btn" />
+            </div>
+        </div>
+    </button>
+
     <button id="settings-top-btn" title="" class="widget-wrapper">
         <img src="{{ url_for('music.serve_media_fix', filename='icons/settings.svg') }}" alt="settings" class="btn-icon" />
         <div class="edit-frame">
@@ -152,6 +163,28 @@
                 </div>
             </div>
 
+            <div class="new-settings-item setting-item">
+                <span class="label" data-i18n="background">Фон</span>
+            </div>
+            <div class="new-settings-item setting-item">
+                <span class="label" data-i18n="loadingView">Вид загрузки</span>
+            </div>
+            <div class="new-settings-item setting-item">
+                <span class="label" data-i18n="sliderIcon">Слайдер иконка</span>
+            </div>
+            <div class="new-settings-item setting-item">
+                <span class="label" data-i18n="textAnimation">Анимация текста</span>
+            </div>
+            <div class="new-settings-item setting-item">
+                <span class="label" data-i18n="model3d">3D модель</span>
+            </div>
+            <div class="new-settings-item setting-item">
+                <span class="label" data-i18n="cursor">Курсор</span>
+            </div>
+            <div class="new-settings-item setting-item">
+                <span class="label" data-i18n="siteIcon">Иконка сайта</span>
+            </div>
+
             <div class="opacity-slider-wrap">
                 <span class="label"></span>
                 <input type="range" id="visualizerOpacity" min="0" max="100" value="30" />
@@ -216,6 +249,32 @@
                 <div class="about-row">
                     <span class="about-label"></span>
                     <span class="about-value">{{ developer }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="profile-overlay"></div>
+    <div id="profile-panel">
+        <div class="settings-header">
+            <h2 id="profile-title"></h2>
+            <button class="settings-close-btn" id="profile-close-btn">×</button>
+        </div>
+        <div class="settings-content">
+            <div class="profile-header-row">
+                <div class="profile-avatar">
+                    <img src="{{ url_for('music.static', filename='icons/profile.svg') }}" alt="avatar" />
+                </div>
+                <div class="profile-name">User Name</div>
+            </div>
+            <div class="profile-stats">
+                <div class="profile-stat">
+                    <span class="stat-value">0</span>
+                    <span class="stat-label">Tracks</span>
+                </div>
+                <div class="profile-stat">
+                    <span class="stat-value">0</span>
+                    <span class="stat-label">Playlists</span>
                 </div>
             </div>
         </div>

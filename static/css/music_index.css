@@ -74,6 +74,38 @@ body {
 .widget-wrapper.edit-mode .edit-frame { display: block !important; }
 .widget-wrapper.edit-mode { pointer-events: all !important; }
 
+#profile-top-btn {
+    top: 20px;
+    right: 80px;
+    width: 48px;
+    height: 48px;
+    z-index: 9999;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--neon-border);
+    border-radius: 12px;
+    cursor: pointer;
+    padding: 0;
+    overflow: visible;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.3s, background 0.3s;
+}
+#profile-top-btn:hover {
+    border-color: var(--neon-red);
+    background: rgba(20,0,0,0.8);
+}
+#profile-top-btn .btn-icon {
+    width: 28px;
+    height: 28px;
+    filter: brightness(0) invert(1);
+    transition: 0.3s;
+    display: block;
+    pointer-events: none;
+    flex-shrink: 0;
+}
+
 #settings-top-btn {
     top: 20px;
     right: 20px;
@@ -90,25 +122,20 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 0 20px rgba(0,0,0,0.6);
-    transition: box-shadow 0.3s, border-color 0.3s, background 0.3s;
+    transition: border-color 0.3s, background 0.3s;
 }
 #settings-top-btn:hover {
     border-color: var(--neon-red);
-    box-shadow: 0 0 20px var(--neon-glow);
     background: rgba(20,0,0,0.8);
 }
 #settings-top-btn .btn-icon {
     width: 28px;
     height: 28px;
-    filter: brightness(0) invert(1) drop-shadow(0 0 4px var(--neon-glow));
+    filter: brightness(0) invert(1);
     transition: 0.3s;
     display: block;
     pointer-events: none;
     flex-shrink: 0;
-}
-#settings-top-btn:hover .btn-icon {
-    filter: brightness(0) invert(1) drop-shadow(0 0 8px var(--neon-red));
 }
 
 #player-widget {
@@ -653,7 +680,8 @@ body {
     background: var(--neon-dim);
 }
 
-#settings-panel {
+#settings-panel,
+#profile-panel {
     position: fixed;
     top: 20px;
     right: 20px;
@@ -675,14 +703,18 @@ body {
     display: flex;
     flex-direction: column;
 }
-#settings-panel.open {
+#settings-panel.open,
+#profile-panel.open {
     transform: scale(1) translateY(0);
     opacity: 1;
     pointer-events: all;
 }
-#settings-panel::-webkit-scrollbar { width: 4px; }
-#settings-panel::-webkit-scrollbar-track { background: transparent; }
-#settings-panel::-webkit-scrollbar-thumb {
+#settings-panel::-webkit-scrollbar,
+#profile-panel::-webkit-scrollbar { width: 4px; }
+#settings-panel::-webkit-scrollbar-track,
+#profile-panel::-webkit-scrollbar-track { background: transparent; }
+#settings-panel::-webkit-scrollbar-thumb,
+#profile-panel::-webkit-scrollbar-thumb {
     background: var(--neon-red);
     border-radius: 4px;
 }
@@ -1095,7 +1127,65 @@ body {
     font-weight: 500;
 }
 
-#settings-overlay {
+.profile-header-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+.profile-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 14px;
+    border: 1px solid var(--neon-border);
+    overflow: hidden;
+    background: rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.profile-avatar img {
+    width: 44px;
+    height: 44px;
+    filter: brightness(0) invert(1) opacity(0.8);
+}
+.profile-name {
+    color: white;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+.profile-stats {
+    display: flex;
+    justify-content: space-around;
+    gap: 12px;
+}
+.profile-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 16px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.06);
+    flex: 1;
+}
+.profile-stat .stat-value {
+    color: white;
+    font-size: 20px;
+    font-weight: 700;
+}
+.profile-stat .stat-label {
+    color: rgba(255,255,255,0.5);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+#settings-overlay,
+#profile-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -1107,7 +1197,8 @@ body {
     pointer-events: none;
     transition: opacity 0.4s ease;
 }
-#settings-overlay.active {
+#settings-overlay.active,
+#profile-overlay.active {
     opacity: 1;
     pointer-events: all;
 }
@@ -1278,8 +1369,10 @@ body {
 }
 
 @media (max-width: 700px) {
+    #profile-top-btn { width: 40px; height: 40px; top: 12px; right: 64px; }
     #settings-top-btn { width: 40px; height: 40px; top: 12px; right: 12px; }
-    #settings-panel {
+    #settings-panel,
+    #profile-panel {
         width: calc(100% - 40px);
         top: 20px;
         right: 20px;
