@@ -1,17 +1,21 @@
 import json
 import os
 import sys
+
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+if CURRENT_DIR not in sys.path:
+    sys.path.insert(0, CURRENT_DIR)
+
 from flask import Flask, Blueprint, jsonify, render_template, request, send_from_directory
+import bg
 
 bp = Blueprint('music', __name__,
                url_prefix='/music',
                template_folder='templates',
                static_folder='static')
 
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 MUSIC_FOLDER = os.path.join(CURRENT_DIR, "music")
 MEDIA_FOLDER = os.path.join(CURRENT_DIR, "media")
-CONFIG_FILE = os.path.join(CURRENT_DIR, "config.json")
 
 os.makedirs(MUSIC_FOLDER, exist_ok=True)
 os.makedirs(MEDIA_FOLDER, exist_ok=True)
@@ -19,21 +23,6 @@ os.makedirs(MEDIA_FOLDER, exist_ok=True)
 DEVELOPER = "vad5m_dev"
 
 SUPPORTED_EXTENSIONS = (".mp3", ".m4a", ".aac", ".ogg", ".wav", ".flac", ".opus", ".webm")
-
-python = """
-⠀⠀⠀⠀⠀⠀⠀⢀⣤⣴⣶⣶⣶⣶⣶⣦⣄
-⠀⠀⠀⠀⠀⠀⢀⣾⠟⠛⢿⣿⣿⣿⣿⣿⣿⣷
-⠀⠀⠀⠀⠀⠀⢸⣿⣄⣀⣼⣿⣿⣿⣿⣿⣿⣿⠀⢀⣀⣀⣀⡀
-⠀⠀⠀⠀⠀⠀⠈⠉⠉⠉⠉⠉⠉⣿⣿⣿⣿⣿⠀⢸⣿⣿⣿⣿⣦⠀
-⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⢸⣿⣿⣿⣿⣿⡇
-⢰⣿⣿⣿⣿⣿⣿⣿⣿⠿⠿⠿⠿⠿⠿⠿⠿⠋⠀⣼⣿⣿⣿⣿⣿⡇
-⢸⣿⣿⣿⣿⣿⡿⠉⢀⣠⣤⣤⣤⣤⣤⣤⣤⣴⣾⣿⣿⣿⣿⣿⣿⡇
-⢸⣿⣿⣿⣿⣿⡇⠀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠀
-⠘⣿⣿⣿⣿⣿⡇⠀⣿⣿⣿⣿⣿⠛⠛⠛⠛⠛⠛⠛⠛⠛⠋⠁⠀⠀
-⠀⠈⠛⠻⠿⠿⠇⠀⣿⣿⣿⣿⣿⣿⣿⣿⠿⠿⣿⡇
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣧⣀⣀⣿⠇
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⢿⣿⣿⣿⣿⣿⣿⣿⡿⠋
-"""
 
 DEFAULT_WIDGETS = {
     "settings": {"x": 20, "y": 20, "width": 48, "height": 48, "rotation": 0, "scale": 1, "fontScale": 1},
@@ -52,6 +41,11 @@ DEFAULT_CONFIG = {
     "playlist_visible": True,
     "visualizer_mode": 0,
     "eq_gains": [0, 0, 0, 0, 0, 0, 0],
+    "effects_mode": 0,
+    "effects_opacity": 50,
+    "effects_color": "#ff001c",
+    "volume": 70,
+    "language": "ru",
     "widgets": DEFAULT_WIDGETS.copy()
 }
 
@@ -74,21 +68,15 @@ def ensure_config_structure(config):
     return merge_defaults(config, DEFAULT_CONFIG)
 
 def load_config():
-    if not os.path.exists(CONFIG_FILE):
-        save_config(DEFAULT_CONFIG)
+    config = bg.load_app_config()
+    if config is None:
+        bg.save_app_config(DEFAULT_CONFIG)
         return DEFAULT_CONFIG.copy()
-    try:
-        with open(CONFIG_FILE, "r", encoding="utf-8") as f:
-            config = json.load(f)
-            config = ensure_config_structure(config)
-            return config
-    except (json.JSONDecodeError, IOError):
-        save_config(DEFAULT_CONFIG)
-        return DEFAULT_CONFIG.copy()
+    config = ensure_config_structure(config)
+    return config
 
 def save_config(data):
-    with open(CONFIG_FILE, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+    bg.save_app_config(data)
 
 def get_music_list():
     music_files = []
@@ -130,6 +118,7 @@ def serve_media_fix(filename):
     return send_from_directory(MEDIA_FOLDER, filename)
 
 def create_app():
+    bg.init_db()
     app = Flask(__name__)
     app.register_blueprint(bp)
     return app
