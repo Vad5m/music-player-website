@@ -10,6 +10,7 @@ window.LOCALES = {
         search: "Поиск...",
         noTracks: "Нет треков",
         download: "Скачать",
+        delete: "Удалить",
         loadingError: "Ошибка загрузки",
         unknownArtist: "Неизвестный артист",
         settings: "Настройки",
@@ -46,7 +47,8 @@ window.LOCALES = {
         textAnimation: "Анимация текста",
         model3d: "3D модель",
         cursor: "Курсор",
-        siteIcon: "Иконка сайта"
+        siteIcon: "Иконка сайта",
+        music: "Музыка"
     },
     eng: {
         shuffle: "Shuffle",
@@ -59,6 +61,7 @@ window.LOCALES = {
         search: "Search...",
         noTracks: "No tracks",
         download: "Download",
+        delete: "Delete",
         loadingError: "Loading error",
         unknownArtist: "Unknown Artist",
         settings: "Settings",
@@ -95,7 +98,8 @@ window.LOCALES = {
         textAnimation: "Text animation",
         model3d: "3D model",
         cursor: "Cursor",
-        siteIcon: "Site icon"
+        siteIcon: "Site icon",
+        music: "Music"
     }
 };
 
@@ -151,6 +155,9 @@ window.applyLocale = function() {
 
     const profileTitle = document.getElementById('profile-title');
     if (profileTitle) profileTitle.textContent = window.t('profile');
+
+    const fileTitle = document.getElementById('file-title');
+    if (fileTitle) fileTitle.textContent = window.t('music');
 
     const labels = document.querySelectorAll('#settings-panel .settings-main .setting-item .label');
     if (labels.length >= 1) {

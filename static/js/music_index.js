@@ -16,6 +16,7 @@
     const fileInput = document.getElementById('file-input');
     const fileList = document.getElementById('file-list');
     const fileSearch = document.getElementById('file-search');
+    const fileTitle = document.getElementById('file-title');
 
     let fileQuery = '';
 
