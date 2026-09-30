@@ -3,8 +3,6 @@
 <img width="1920" height="1080" alt="изображение" src="https://github.com/user-attachments/assets/5823a8db-6580-49aa-8be8-691f3f882cc8" />
 <img width="1920" height="1200" alt="изображение" src="https://github.com/user-attachments/assets/474149ba-3ef7-4174-8d72-49de87cc23a3" />
 
-last
-
 # music-player-website
 ## ✨ Features
 
