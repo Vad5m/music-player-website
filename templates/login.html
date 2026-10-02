@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход | Премиум доступ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            background: #000;
+            color: #fff;
+        }
+
+        .stellar-mist {
+            position: absolute;
+            inset: -10%;
+            z-index: 0;
+            background:
+                radial-gradient(ellipse 140% 50% at 15% 60%, rgba(255, 255, 255, 0.08), transparent 48%),
+                radial-gradient(ellipse 90% 80% at 85% 25%, rgba(255, 255, 255, 0.06), transparent 58%),
+                radial-gradient(ellipse 120% 65% at 40% 90%, rgba(255, 255, 255, 0.09), transparent 52%),
+                radial-gradient(ellipse 100% 45% at 70% 5%, rgba(255, 255, 255, 0.05), transparent 42%),
+                radial-gradient(ellipse 80% 75% at 90% 80%, rgba(255, 255, 255, 0.07), transparent 55%),
+                #000000;
+            animation: mistPulse 14s ease-in-out infinite alternate;
+            will-change: transform, filter;
+        }
+
+        @keyframes mistPulse {
+            0% { filter: brightness(1) saturate(1); transform: scale(1) translate(0, 0); }
+            25% { filter: brightness(1.12) saturate(0); transform: scale(1.06) translate(1%, -1%); }
+            50% { filter: brightness(1.2) saturate(0); transform: scale(1.1) translate(-1%, 1%); }
+            75% { filter: brightness(1.08) saturate(0); transform: scale(1.05) translate(1%, 1%); }
+            100% { filter: brightness(1.05) saturate(0); transform: scale(1.02) translate(-1%, -1%); }
+        }
+
+        .stellar-mist::before,
+        .stellar-mist::after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(90px);
+            opacity: 0.4;
+            pointer-events: none;
+            will-change: transform;
+        }
+
+        .stellar-mist::before {
+            width: 450px; height: 450px; top: -120px; left: -120px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.4), transparent 70%);
+            animation: floatBlob1 18s ease-in-out infinite;
+        }
+
+        .stellar-mist::after {
+            width: 400px; height: 400px; bottom: -150px; right: -100px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent 70%);
+            animation: floatBlob2 22s ease-in-out infinite;
+        }
+
+        @keyframes floatBlob1 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(80px, 50px) scale(1.2); }
+            50% { transform: translate(-40px, 100px) scale(0.9); }
+            75% { transform: translate(60px, -30px) scale(1.1); }
+        }
+        @keyframes floatBlob2 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(-90px, -60px) scale(1.25); }
+            66% { transform: translate(50px, 40px) scale(0.95); }
+        }
+
+        .card-box {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 1000px;
+            background: #000;
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid #1a1a1a;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+            animation: cardAppear 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+            transition: transform 0.4s ease;
+        }
+        .card-box:hover { transform: translateY(-4px); }
+
+        @keyframes cardAppear {
+            from { opacity: 0; transform: translateY(40px) scale(0.94); filter: blur(8px); }
+            to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+        }
+
+        .left-panel {
+            flex: 1 1 340px;
+            position: relative;
+            background: radial-gradient(circle at 50% 10%, #ffffff 0%, #aaaaaa 30%, #444444 60%, #000 100%);
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 450px;
+            overflow: hidden;
+        }
+        .left-panel::before {
+            content: "";
+            position: absolute;
+            width: 300px; height: 300px; top: -80px; left: -80px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent 70%);
+            filter: blur(60px);
+            animation: glowPulse 5s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+        @keyframes glowPulse {
+            0% { opacity: 0.4; transform: scale(1); }
+            100% { opacity: 0.9; transform: scale(1.3); }
+        }
+
+        .noise-texture {
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
+            opacity: 0.6;
+            mix-blend-mode: overlay;
+            pointer-events: none;
+            animation: noiseShift 1.2s steps(4) infinite;
+        }
+        @keyframes noiseShift {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(-2%, 1%); }
+            50% { transform: translate(1%, -2%); }
+            75% { transform: translate(-1%, 2%); }
+            100% { transform: translate(0, 0); }
+        }
+
+        .hero-text {
+            position: relative;
+            z-index: 2;
+            animation: heroAppear 1s cubic-bezier(0.23, 1, 0.32, 1) 0.2s both;
+        }
+        @keyframes heroAppear {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .hero-title {
+            font-size: 36px;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 16px;
+            background: linear-gradient(90deg, #fff, #ccc, #fff);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shineText 4s linear infinite;
+        }
+        @keyframes shineText { to { background-position: 200% center; } }
+
+        .hero-desc {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 32px;
+            font-size: 15px;
+            animation: fadeUp 0.8s ease 0.4s both;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-list { display: flex; flex-direction: column; gap: 12px; }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            transition: 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+            font-size: 14px;
+            cursor: default;
+            animation: stepSlideIn 0.6s cubic-bezier(0.23, 1, 0.32, 1) both;
+            position: relative;
+            overflow: hidden;
+        }
+        .step-item:nth-child(1) { animation-delay: 0.5s; }
+        .step-item:nth-child(2) { animation-delay: 0.65s; }
+        .step-item:nth-child(3) { animation-delay: 0.8s; }
+        @keyframes stepSlideIn {
+            from { opacity: 0; transform: translateX(-24px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .step-item:hover { background: rgba(255, 255, 255, 0.14); transform: translateX(6px) scale(1.02); }
+
+        .step-item::after {
+            content: "";
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 3px;
+            background: transparent;
+            transition: background 0.3s;
+        }
+        .active-step::after {
+            background: linear-gradient(180deg, #fff, #888);
+            animation: activeBar 1.8s ease-in-out infinite;
+        }
+        @keyframes activeBar {
+            0%, 100% { opacity: 1; box-shadow: 0 0 8px #fff; }
+            50% { opacity: 0.4; box-shadow: 0 0 2px #fff; }
+        }
+        .active-step {
+            background: white;
+            color: black;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            border: none;
+            animation: activePulse 2.5s ease-in-out infinite;
+        }
+        @keyframes activePulse {
+            0%, 100% { box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 0 0 0 rgba(255, 255, 255, 0.4); }
+            50% { box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3), 0 0 0 8px rgba(255, 255, 255, 0); }
+        }
+
+        .step-num {
+            width: 24px; height: 24px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 12px; font-weight: bold;
+            transition: transform 0.3s ease;
+        }
+        .step-item:hover .step-num { transform: scale(1.15) rotate(-8deg); }
+        .active-step .step-num { background: black; color: white; }
+
+        .right-panel {
+            flex: 1 1 340px;
+            background: black;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+
+        .form-wrapper {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            animation: formAppear 0.9s cubic-bezier(0.23, 1, 0.32, 1) 0.3s both;
+        }
+        @keyframes formAppear {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .form-header-group { margin-bottom: 32px; animation: fadeUp 0.7s ease 0.5s both; }
+
+        .form-title {
+            color: white;
+            font-size: 26px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            position: relative;
+            display: inline-block;
+        }
+        .form-title::after {
+            content: "";
+            position: absolute;
+            left: 0; bottom: -4px;
+            width: 0; height: 2px;
+            background: linear-gradient(90deg, #fff, #888);
+            transition: width 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .form-wrapper:hover .form-title::after { width: 100%; }
+
+        .form-desc { color: #888; font-size: 14px; animation: fadeUp 0.7s ease 0.6s both; }
+
+        .tabs {
+            display: flex;
+            background: #121212;
+            border-radius: 12px;
+            padding: 5px;
+            margin-bottom: 24px;
+            border: 1px solid #1a1a1a;
+            position: relative;
+            animation: fadeUp 0.7s ease 0.65s both;
+        }
+        .tabs::before {
+            content: "";
+            position: absolute;
+            top: 5px; left: 5px;
+            width: calc(50% - 5px);
+            height: calc(100% - 10px);
+            background: white;
+            border-radius: 8px;
+            transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            z-index: 0;
+        }
+        .tabs.reg-mode::before { transform: translateX(100%); }
+
+        .tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: color 0.35s ease;
+            user-select: none;
+            border: none;
+            background: transparent;
+            font-family: inherit;
+            position: relative;
+            z-index: 1;
+        }
+        .tab.active { color: black; }
+        .tab:not(.active):hover { color: #aaa; }
+
+        .social-btn-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            animation: fadeUp 0.7s ease 0.75s both;
+        }
+        .social-button {
+            flex: 1;
+            background: transparent;
+            border: 1px solid #333;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+            font-family: inherit;
+            font-size: 14px;
+            position: relative;
+            overflow: hidden;
+        }
+        .social-button::before {
+            content: "";
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+            transition: left 0.6s ease;
+        }
+        .social-button:hover::before { left: 100%; }
+        .social-button:hover {
+            background: #111;
+            border-color: #555;
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+        }
+        .social-button:active { transform: translateY(-1px) scale(0.98); }
+        .social-button svg { transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1); filter: grayscale(1); }
+        .social-button:hover svg { transform: rotate(12deg) scale(1.15); }
+
+        .divider-text {
+            display: flex;
+            align-items: center;
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 24px;
+            animation: fadeUp 0.7s ease 0.8s both;
+        }
+        .divider-text::before,
+        .divider-text::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #333, transparent);
+            margin: 0 16px;
+            animation: dividerShimmer 3s ease-in-out infinite;
+        }
+        @keyframes dividerShimmer {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        .input-group { position: relative; margin-bottom: 1.5rem; }
+
+        .input {
+            border: solid 1.5px #9e9e9e;
+            border-radius: 1rem;
+            background: none;
+            padding: 1rem;
+            font-size: 1rem;
+            color: #f5f5f5;
+            transition: border 200ms cubic-bezier(0.4,0,0.2,1),
+                        box-shadow 300ms ease,
+                        background 300ms ease;
+            width: 100%;
+            outline: none;
+            font-family: inherit;
+        }
+        .input:hover { border-color: #bbb; }
+
+        .user-label {
+            position: absolute;
+            left: 15px;
+            top: 0;
+            color: #e8e8e8;
+            pointer-events: none;
+            transform: translateY(1rem);
+            transition: 200ms cubic-bezier(0.4,0,0.2,1);
+        }
+        .input:focus, .input:not(:placeholder-shown) {
+            outline: none;
+            border: 1.5px solid #fff;
+            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.04);
+        }
+        .input:focus ~ label, .input:not(:placeholder-shown) ~ label {
+            transform: translateY(-50%) scale(0.8);
+            background-color: #000;
+            padding: 0 .2em;
+            color: #fff;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 4px;
+            transition: color 0.3s, transform 0.3s;
+            line-height: 1;
+            z-index: 2;
+        }
+        .toggle-password:hover { color: rgba(255, 255, 255, 0.9); transform: translateY(-50%) scale(1.2) rotate(8deg); }
+        .toggle-password:active { transform: translateY(-50%) scale(0.9); }
+
+        .forgot-link {
+            display: block;
+            text-align: right;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.8rem;
+            text-decoration: none;
+            margin-top: -0.8rem;
+            margin-bottom: 1.5rem;
+            transition: color 0.3s, transform 0.3s;
+            position: relative;
+        }
+        .forgot-link::after {
+            content: "";
+            position: absolute;
+            right: 0; bottom: -2px;
+            width: 0; height: 1px;
+            background: #fff;
+            transition: width 0.3s ease;
+        }
+        .forgot-link:hover { color: #fff; transform: translateX(-3px); }
+        .forgot-link:hover::after { width: 100%; }
+
+        .submit-button {
+            width: 100%;
+            background: white;
+            color: black;
+            border: none;
+            padding: 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+            font-family: inherit;
+            font-size: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+        .submit-button:hover {
+            background: #e5e5e5;
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 32px rgba(255, 255, 255, 0.15);
+        }
+        .submit-button:active { transform: translateY(-1px) scale(0.99); }
+        .submit-button:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+        .submit-button span { position: relative; z-index: 1; }
+
+        .footer-text { text-align: center; margin-top: 24px; color: #888; font-size: 13px; }
+        .footer-text a {
+            color: white;
+            text-decoration: none;
+            position: relative;
+            transition: color 0.3s;
+        }
+        .footer-text a::after {
+            content: "";
+            position: absolute;
+            left: 0; bottom: -2px;
+            width: 0; height: 1px;
+            background: linear-gradient(90deg, #fff, #888);
+            transition: width 0.35s ease;
+        }
+        .footer-text a:hover { color: #ccc; }
+        .footer-text a:hover::after { width: 100%; }
+
+        .register-only { display: none; margin-bottom: 1.5rem; }
+        .form-wrapper.register-mode .register-only {
+            display: block;
+            animation: fadeUp 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .form-wrapper.register-mode .forgot-link { display: none; }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-8px); }
+            40% { transform: translateX(8px); }
+            60% { transform: translateX(-6px); }
+            80% { transform: translateX(6px); }
+        }
+        .input-group.shake { animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both; }
+        .input-group.shake .input {
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15) !important;
+        }
+
+        @media (max-width: 500px) {
+            .left-panel, .right-panel { padding: 24px; }
+            .hero-title { font-size: 28px; }
+            .social-button span { display: none; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="stellar-mist"></div>
+
+    <div class="card-box">
+        <div class="left-panel">
+            <div class="noise-texture"></div>
+
+            <div class="hero-text">
+                <div class="hero-title">Добро пожаловать</div>
+                <div class="hero-desc">Войдите в аккаунт, чтобы слушать пиздатые треки.</div>
+
+                <div class="step-list">
+                    <div class="step-item active-step">
+                        <div class="step-num">1</div>
+                        <span>Введите данные аккаунта</span>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-num">2</div>
+                        <span>Подтвердите вход</span>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-num">3</div>
+                        <span>Слушайте музыку</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="form-wrapper" id="formWrapper">
+                <div class="form-header-group">
+                    <div class="form-title" id="formTitle">Вход в аккаунт</div>
+                    <div class="form-desc" id="formDesc">Введите свои данные для входа.</div>
+                </div>
+
+                <div class="tabs" id="tabs">
+                    <button class="tab active" type="button" data-tab="login">Вход</button>
+                    <button class="tab" type="button" data-tab="register">Регистрация</button>
+                </div>
+
+                <div class="social-btn-group">
+                    <button class="social-button" type="button" onclick="oauthLogin('google')">
+                        <svg viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#ffffff"/>
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#ffffff"/>
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#ffffff"/>
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#ffffff"/>
+                        </svg>
+                        <span>Google</span>
+                    </button>
+                    <button class="social-button" type="button" onclick="oauthLogin('github')">
+                        <svg viewBox="0 0 24 24" width="20" fill="white">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                        <span>Github</span>
+                    </button>
+                </div>
+
+                <div class="divider-text">или</div>
+
+                <form id="authForm" autocomplete="off">
+                    <div class="input-group">
+                        <input type="text" name="text" autocomplete="off" class="input" id="usernameInput" placeholder=" ">
+                        <label class="user-label">Username</label>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="password" name="password" autocomplete="off" class="input" id="passwordInput" placeholder=" ">
+                        <label class="user-label">Пароль</label>
+                        <button type="button" class="toggle-password" aria-label="Показать пароль">👁</button>
+                    </div>
+
+                    <div class="input-group register-only" id="confirmGroup">
+                        <input type="password" name="password_confirm" autocomplete="off" class="input" id="passwordConfirm" placeholder=" ">
+                        <label class="user-label">Повторите пароль</label>
+                    </div>
+
+                    <a href="#" class="forgot-link">Забыли пароль?</a>
+
+                    <button type="submit" class="submit-button" id="submitBtn">
+                        <span id="submitText">Войти в аккаунт</span>
+                    </button>
+                </form>
+
+                <div class="footer-text">
+                    Нет аккаунта? <a href="#" id="footerLink">Создать бесплатно</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const tabsContainer = document.getElementById('tabs');
+        const tabButtons = document.querySelectorAll('.tab');
+        const formWrapper = document.getElementById('formWrapper');
+        const formTitle = document.getElementById('formTitle');
+        const formDesc = document.getElementById('formDesc');
+        const submitText = document.getElementById('submitText');
+        const footerLink = document.getElementById('footerLink');
+        const passwordInput = document.getElementById('passwordInput');
+        const passwordConfirm = document.getElementById('passwordConfirm');
+        const confirmGroup = document.getElementById('confirmGroup');
+        const authForm = document.getElementById('authForm');
+        const toggleBtn = document.querySelector('.toggle-password');
+        const usernameInput = document.getElementById('usernameInput');
+
+        let currentMode = 'login';
+
+        function oauthLogin(provider) {
+            // provider уже валидируется на бэкенде, но кодируем на всякий случай
+            window.location.href = `/music/login/api/oauth/${encodeURIComponent(provider)}`;
+        }
+
+        function setMode(mode) {
+            currentMode = mode;
+
+            tabButtons.forEach(t => {
+                t.classList.toggle('active', t.dataset.tab === mode);
+            });
+
+            if (mode === 'register') {
+                tabsContainer.classList.add('reg-mode');
+                formWrapper.classList.add('register-mode');
+                formTitle.textContent = 'Создать аккаунт';
+                formDesc.textContent = 'Заполните данные для регистрации.';
+                submitText.textContent = 'Зарегистрироваться';
+                footerLink.textContent = 'Войти';
+                toggleBtn.style.display = 'none';
+            } else {
+                tabsContainer.classList.remove('reg-mode');
+                formWrapper.classList.remove('register-mode');
+                formTitle.textContent = 'Вход в аккаунт';
+                formDesc.textContent = 'Введите свои данные для входа.';
+                submitText.textContent = 'Войти в аккаунт';
+                footerLink.textContent = 'Создать бесплатно';
+                passwordConfirm.value = '';
+                confirmGroup.classList.remove('shake');
+                toggleBtn.style.display = '';
+            }
+        }
+
+        tabButtons.forEach(tab => {
+            tab.addEventListener('click', () => setMode(tab.dataset.tab));
+        });
+
+        footerLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            setMode(currentMode === 'login' ? 'register' : 'login');
+        });
+
+        toggleBtn.addEventListener('click', () => {
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleBtn.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                toggleBtn.textContent = '👁';
+            }
+
+            toggleBtn.style.transform = 'translateY(-50%) scale(1.3) rotate(-10deg)';
+            setTimeout(() => {
+                toggleBtn.style.transform = 'translateY(-50%) scale(1) rotate(0deg)';
+            }, 200);
+        });
+
+        function shakeGroup(group) {
+            group.classList.remove('shake');
+            void group.offsetWidth;
+            group.classList.add('shake');
+            setTimeout(() => group.classList.remove('shake'), 600);
+        }
+
+        authForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value;
+
+            if (!username || !password) {
+                shakeGroup(passwordInput.closest('.input-group'));
+                return;
+            }
+
+            if (currentMode === 'register' && password !== passwordConfirm.value) {
+                shakeGroup(confirmGroup);
+                return;
+            }
+
+            const btn = document.getElementById('submitBtn');
+            const originalText = submitText.textContent;
+            submitText.textContent = 'Отправка...';
+            btn.disabled = true;
+
+            try {
+                const url = currentMode === 'register'
+                    ? '/music/login/api/register'
+                    : '/music/login/api/login';
+
+                const payload = currentMode === 'register'
+                    ? { username, password, password_confirm: passwordConfirm.value }
+                    : { username, password };
+
+                const res = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    submitText.textContent = data.error || 'Ошибка';
+                    btn.style.background = 'linear-gradient(90deg, #7f1d1d, #450a0a)';
+                    btn.style.color = 'white';
+                    shakeGroup(passwordInput.closest('.input-group'));
+                    setTimeout(() => {
+                        submitText.textContent = originalText;
+                        btn.style.background = '';
+                        btn.style.color = '';
+                        btn.disabled = false;
+                    }, 2000);
+                    return;
+                }
+
+                submitText.textContent = 'Секундочку';
+                btn.style.background = 'linear-gradient(90deg, #555, #222)';
+                btn.style.color = 'white';
+
+                setTimeout(() => {
+                    window.location.href = data.redirect || '/music/';
+                }, 800);
+            } catch (err) {
+                submitText.textContent = 'Сеть недоступна';
+                btn.style.background = 'linear-gradient(90deg, #7f1d1d, #450a0a)';
+                btn.style.color = 'white';
+                setTimeout(() => {
+                    submitText.textContent = originalText;
+                    btn.style.background = '';
+                    btn.style.color = '';
+                    btn.disabled = false;
+                }, 2000);
+            }
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 30;
+            const y = (e.clientY / window.innerHeight - 0.5) * 30;
+            const mist = document.querySelector('.stellar-mist');
+            if (mist) {
+                mist.style.transform = `translate(${x}px, ${y}px)`;
+                mist.style.transition = 'transform 0.4s ease-out';
+            }
+        });
+
+        window.addEventListener('load', () => {
+            const card = document.querySelector('.card-box');
+            card.style.animation = 'none';
+            void card.offsetWidth;
+            card.style.animation = 'cardAppear 0.8s cubic-bezier(0.23, 1, 0.32, 1)';
+        });
+    </script>
+
+</body>
+</html>

@@ -63,6 +63,29 @@ def create_tables():
         )
     """)
 
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS user_config (
+            user_id INTEGER PRIMARY KEY,
+            config_json TEXT NOT NULL,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE
+        )
+    """)
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS oauth_accounts (
+            oauth_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            provider TEXT NOT NULL,
+            provider_user_id TEXT NOT NULL,
+            provider_email TEXT,
+            access_token TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(provider, provider_user_id),
+            FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE
+        )
+    """)
+
     conn.commit()
     cursor.close()
     conn.close()
@@ -230,25 +253,92 @@ def save_app_config(config_data):
     cursor.close()
     conn.close()
 
+def load_user_config(user_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT config_json FROM user_config WHERE user_id = ?", (user_id,))
+    row = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    if row and row["config_json"]:
+        return json.loads(row["config_json"])
+    return None
+
+def save_user_config(user_id, config_data):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT INTO user_config (user_id, config_json, updated_at) VALUES (?, ?, CURRENT_TIMESTAMP) "
+        "ON CONFLICT(user_id) DO UPDATE SET config_json = excluded.config_json, updated_at = CURRENT_TIMESTAMP",
+        (user_id, json.dumps(config_data))
+    )
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+def get_oauth_account(provider, provider_user_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT * FROM oauth_accounts WHERE provider = ? AND provider_user_id = ?",
+        (provider, provider_user_id)
+    )
+    row = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return dict(row) if row else None
+
+def create_oauth_account(user_id, provider, provider_user_id, provider_email, access_token=None):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT INTO oauth_accounts (user_id, provider, provider_user_id, provider_email, access_token) "
+        "VALUES (?, ?, ?, ?, ?)",
+        (user_id, provider, provider_user_id, provider_email, access_token)
+    )
+    conn.commit()
+    oauth_id = cursor.lastrowid
+    cursor.close()
+    conn.close()
+    return oauth_id
+
+def link_oauth_account(user_id, provider, provider_user_id, provider_email, access_token=None):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT OR IGNORE INTO oauth_accounts (user_id, provider, provider_user_id, provider_email, access_token) "
+        "VALUES (?, ?, ?, ?, ?)",
+        (user_id, provider, provider_user_id, provider_email, access_token)
+    )
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+def get_oauth_accounts_by_user(user_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM oauth_accounts WHERE user_id = ?", (user_id,))
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return [dict(r) for r in rows]
+
 def init_db():
     create_database()
     create_tables()
-
-init_db()
-
-if __name__ == "__main__":
     python = """
-    ⠀⠀⠀⠀⠀⠀⠀⢀⣤⣴⣶⣶⣶⣶⣶⣦⣄
-    ⠀⠀⠀⠀⠀⠀⢀⣾⠟⠛⢿⣿⣿⣿⣿⣿⣿⣷
-    ⠀⠀⠀⠀⠀⠀⢸⣿⣄⣀⣼⣿⣿⣿⣿⣿⣿⣿⠀⢀⣀⣀⣀⡀
-    ⠀⠀⠀⠀⠀⠀⠈⠉⠉⠉⠉⠉⠉⣿⣿⣿⣿⣿⠀⢸⣿⣿⣿⣿⣦⠀
-    ⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⢸⣿⣿⣿⣿⣿⡇
-    ⢰⣿⣿⣿⣿⣿⣿⣿⣿⠿⠿⠿⠿⠿⠿⠿⠿⠋⠀⣼⣿⣿⣿⣿⣿⡇
-    ⢸⣿⣿⣿⣿⣿⡿⠉⢀⣠⣤⣤⣤⣤⣤⣤⣤⣴⣾⣿⣿⣿⣿⣿⣿⡇
-    ⢸⣿⣿⣿⣿⣿⡇⠀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠀
-    ⠘⣿⣿⣿⣿⣿⡇⠀⣿⣿⣿⣿⣿⠛⠛⠛⠛⠛⠛⠛⠛⠛⠋⠁⠀⠀
-    ⠀⠈⠛⠻⠿⠿⠇⠀⣿⣿⣿⣿⣿⣿⣿⣿⠿⠿⣿⡇
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣧⣀⣀⣿⠇
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⢿⣿⣿⣿⣿⣿⣿⣿⡿⠋
-    """
+        ⠀⠀⠀⠀⠀⠀⠀⢀⣤⣴⣶⣶⣶⣶⣶⣦⣄
+        ⠀⠀⠀⠀⠀⠀⢀⣾⠟⠛⢿⣿⣿⣿⣿⣿⣿⣷
+        ⠀⠀⠀⠀⠀⠀⢸⣿⣄⣀⣼⣿⣿⣿⣿⣿⣿⣿⠀⢀⣀⣀⣀⡀
+        ⠀⠀⠀⠀⠀⠀⠈⠉⠉⠉⠉⠉⠉⣿⣿⣿⣿⣿⠀⢸⣿⣿⣿⣿⣦⠀
+        ⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⢸⣿⣿⣿⣿⣿⡇
+        ⢰⣿⣿⣿⣿⣿⣿⣿⣿⠿⠿⠿⠿⠿⠿⠿⠿⠋⠀⣼⣿⣿⣿⣿⣿⡇
+        ⢸⣿⣿⣿⣿⣿⡿⠉⢀⣠⣤⣤⣤⣤⣤⣤⣤⣴⣾⣿⣿⣿⣿⣿⣿⡇
+        ⢸⣿⣿⣿⣿⣿⡇⠀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠀
+        ⠘⣿⣿⣿⣿⣿⡇⠀⣿⣿⣿⣿⣿⠛⠛⠛⠛⠛⠛⠛⠛⠛⠋⠁⠀⠀
+        ⠀⠈⠛⠻⠿⠿⠇⠀⣿⣿⣿⣿⣿⣿⣿⣿⠿⠿⣿⡇
+        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣧⣀⣀⣿⠇
+        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⢿⣿⣿⣿⣿⣿⣿⣿⡿⠋
+        """
     print(python)
+init_db()

@@ -1,4 +1,3 @@
-// music_core.js
 window.MusicApp = window.MusicApp || {};
 
 (function (App) {
